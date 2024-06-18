@@ -27,18 +27,14 @@ This section describe the environment and Tools used in the project.
 - React (v18.3.3)
 - TypeScript(v5.4.5)
 
-## Installation
-
-Instructions on how to set up the project locally.
-
 ## Steps to run
 
 Steps to set up the environment and run the project.
 
 ```bash
 # Example commands
-git clone https://github.com/DevdouglasGfs/Taqtile/
-cd Taqtile
+git clone https://github.com/DevdouglasGfs/taqtile.git
+cd taqtile
 npm install
 npm start
 ```
