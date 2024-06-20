@@ -25,12 +25,12 @@ export default function LoginForm() {
   const userData = { email, password } as UserBasicPersonalData;
 
   onkeydown = (ev) => {
-    if (ev.key === 'Enter') login();
+    if (ev.key === 'Enter') validateInput();
   };
 
   const validateInput = (): boolean => {
     const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    const passwordRegex = /^[a-zA-Z0-9]+$/;
+    const passwordRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+$/;
 
     if (emailRegex.test(email.trim())) setValidEmail(true);
     else setValidEmail(false);
@@ -100,12 +100,11 @@ export default function LoginForm() {
               )}
             </label>
           </fieldset>
+          {error && !loading && <p className='info-block_error'>{error.message}</p>}
         </div>
 
-        {loading && <p className='info-block__loading'>Carregando...</p>}
-        {error && <p className='info-block__error'>{error.message}</p>}
-        <button type='submit' onClick={(event) => login(event.preventDefault())} className='login-form__submit'>
-          Entrar
+        <button disabled={loading} aria-disabled={loading} type='submit' onClick={(event) => login(event.preventDefault())} className='login-form__submit'>
+          Entrar {loading && <div className="loading-spinner"></div>}
         </button>
       </form>
     </>
