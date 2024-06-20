@@ -1,13 +1,18 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import './login-form.css';
+import { useMutation } from '@apollo/client';
+import { LOGIN_MUTATION } from '../../graphql/mutations/loginMutations';
+import { storeLoginToken } from '../../utils/auth';
 
-export interface UserDTO {
-  name?: string;
-  email?: string;
-  password?: string;
-  validated?: boolean;
+type UserDTO = {
+  id: number,
+  name: string,
+  phone: string,
+  birthDate: Date,
+  email: string,
+  role: string
 }
-export type UserBasicPersonalData = Required<Pick<UserDTO, 'email' | 'password'>>;
+export type UserBasicPersonalData = Required<Pick<UserDTO, 'email'> & { password: string }>;
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
@@ -20,10 +25,10 @@ export default function LoginForm() {
   const userData = { email, password } as UserBasicPersonalData;
 
   onkeydown = (ev) => {
-    if (ev.key === 'Enter') validateInput();
+    if (ev.key === 'Enter') login();
   };
 
-  const validateInput = (_?: void) => {
+  const validateInput = (): boolean => {
     const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     const passwordRegex = /^[a-zA-Z0-9]+$/;
 
@@ -33,7 +38,26 @@ export default function LoginForm() {
     else setValidPassword(false);
 
     !validEmail || !validPassword ? setShowValidationMessage(true) : setShowValidationMessage(false);
+    return validEmail && validPassword ? true : false
   };
+
+  const [mutateLogin, { data: dataFetched, error, loading }] = useMutation(LOGIN_MUTATION)
+
+  async function login(_?: void) {
+    try {
+      validateInput() && mutateLogin({
+        variables: {
+          data: userData
+        }
+      }).then(data => {
+        storeLoginToken(data.data.login.token)
+        return data.data
+      }).catch(error => console.log(error))
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <>
@@ -46,6 +70,7 @@ export default function LoginForm() {
               Email
               <input
                 id='email'
+                name='email'
                 required
                 value={email}
                 onChange={(ev) => setEmail(ev.target.value)}
@@ -59,6 +84,7 @@ export default function LoginForm() {
               Senha
               <input
                 id='password'
+                name='password'
                 required
                 value={password}
                 onChange={(ev) => setPassword(ev.target.value)}
@@ -72,14 +98,13 @@ export default function LoginForm() {
               {showValidationMessage && !validPassword && (
                 <p className='input-group__informative-message'>A senha deve ser composta por caractéres alfánumericos.</p>
               )}
-              {validPassword ? 'true' : 'false'}
-              {validEmail ? 'true' : 'false'}
-              {showValidationMessage ? 'true' : 'false'}
             </label>
           </fieldset>
         </div>
 
-        <button type='submit' onClick={(event) => validateInput(event.preventDefault())} className='login-form__submit'>
+        {loading && <p className='info-block__loading'>Carregando...</p>}
+        {error && <p className='info-block__error'>{error.message}</p>}
+        <button type='submit' onClick={(event) => login(event.preventDefault())} className='login-form__submit'>
           Entrar
         </button>
       </form>
