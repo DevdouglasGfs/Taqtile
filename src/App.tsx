@@ -1,4 +1,6 @@
-import LoginPage from "./pages/login-page";
-
-const App: React.FC = () => <LoginPage />;
+const App: React.FC = () => {
+    return (
+        <h1>HOME PAGE</h1>
+    )
+};
 export default App;

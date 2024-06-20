@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import './login-form.css';
 import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/mutations/loginMutations';

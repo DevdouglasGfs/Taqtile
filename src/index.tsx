@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import './index.css'
-import App from './App'
-import reportWebVitals from './reportWebVitals'
+import { RouterProvider } from 'react-router-dom';
+import { router } from './routers/root';
 
 export const client = new ApolloClient({
 	cache: new InMemoryCache(),
@@ -14,9 +14,7 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
 	<React.StrictMode>
 		<ApolloProvider client={client}>
-			<App />
+			<RouterProvider router={router} />
 		</ApolloProvider>
 	</React.StrictMode>
 )
-
-reportWebVitals()
