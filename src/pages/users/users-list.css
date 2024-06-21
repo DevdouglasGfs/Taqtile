@@ -1,0 +1,51 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    min-height: 100dvh
+}
+
+.title {
+    font-size: 32px;
+    color: rgb(31, 160, 60);
+    margin: 0;
+}
+
+.users-list {
+    border-radius: 12px;
+    overflow: hidden;
+    min-width: 50cqw;
+}
+
+.users-list thead {
+    background-color: rgb(31, 160, 60);
+    color: white;
+}
+
+.users-list thead tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: minmax(fit-content, 1fr);
+    justify-content: center;
+}
+
+.users-list tbody {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.users-list tbody tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: minmax(fit-content, 1fr);
+    border-bottom: 1px solid rgba(57, 57, 57, .2);
+}
+
+.users-list thead tr,
+.users-list tbody tr {
+    width: 100%;
+    padding: .5rem;
+}
