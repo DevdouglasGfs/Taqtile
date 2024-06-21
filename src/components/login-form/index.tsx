@@ -67,14 +67,11 @@ export default function LoginForm() {
                 className='input-group__input'
               />
               {showValidationMessage && password.trim().length < 7 && (
-                <p className='input-group__informative-message'>A senha deve ter ao menos 7 caractéres.</p>
+                <p className='input-group__informative-message'>A senha deve ter ao menos 7 caracteres.</p>
               )}
               {showValidationMessage && !validPassword && (
-                <p className='input-group__informative-message'>A senha deve ser composta por caractéres alfánumericos.</p>
+                <p className='input-group__informative-message'>A senha deve ser composta por caracteres alfánumericos.</p>
               )}
-              {validPassword ? 'true' : 'false'}
-              {validEmail ? 'true' : 'false'}
-              {showValidationMessage ? 'true' : 'false'}
             </label>
           </fieldset>
         </div>
