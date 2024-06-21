@@ -1,6 +1,8 @@
 const App: React.FC = () => {
     return (
-        <h1>HOME PAGE</h1>
+        <main>
+            <h1>HOME PAGE</h1>
+        </main>
     )
 };
 export default App;

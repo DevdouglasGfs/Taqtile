@@ -3,16 +3,9 @@ import './login-form.css';
 import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/mutations/loginMutations';
 import { storeLoginToken } from '../../utils/auth';
+import { UserDto } from '../../types/user';
 
-type UserDTO = {
-  id: number,
-  name: string,
-  phone: string,
-  birthDate: Date,
-  email: string,
-  role: string
-}
-export type UserBasicPersonalData = Required<Pick<UserDTO, 'email'> & { password: string }>;
+export type UserBasicLoginData = Required<Pick<UserDto, 'email'> & { password: string }>;
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
@@ -22,7 +15,7 @@ export default function LoginForm() {
   const [validPassword, setValidPassword] = useState(false);
   const [showValidationMessage, setShowValidationMessage] = useState(false);
 
-  const userData = { email, password } as UserBasicPersonalData;
+  const userData = { email, password } as UserBasicLoginData;
 
   onkeydown = (ev) => {
     if (ev.key === 'Enter') validateInput();
@@ -41,10 +34,11 @@ export default function LoginForm() {
     return validEmail && validPassword ? true : false
   };
 
-  const [mutateLogin, { data: dataFetched, error, loading }] = useMutation(LOGIN_MUTATION)
+  const [mutateLogin, { error, loading }] = useMutation(LOGIN_MUTATION)
 
   async function login(_?: void) {
     try {
+      localStorage.clear()
       validateInput() && mutateLogin({
         variables: {
           data: userData
