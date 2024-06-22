@@ -2,12 +2,15 @@ import { useState } from 'react';
 import './login-form.css';
 import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/mutations/loginMutations';
-import { storeLoginToken } from '../../utils/auth';
+import { checkLoginStatus, storeLoginToken } from '../../utils/auth';
 import { UserDto } from '../../types/user';
+import { Navigate } from 'react-router-dom';
 
 export type UserBasicLoginData = Required<Pick<UserDto, 'email'> & { password: string }>;
 
 export default function LoginForm() {
+  if(checkLoginStatus()) Navigate({to: '/users'})
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -44,7 +47,6 @@ export default function LoginForm() {
      * will be redirected to another page without the need to login again.
      */
     try {
-      localStorage.clear()
       validateInput() && mutateLogin({
         variables: {
           data: userData
