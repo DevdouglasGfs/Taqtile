@@ -1,4 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
+import { PageInput } from "../types/pagination";
 
 const FETCH_USERS = gql(`
     query GetUsers($data: PageInput) {
@@ -6,17 +7,15 @@ const FETCH_USERS = gql(`
             nodes {
               id
               name
-              phone
-              birthDate
               email
-              role
             }
         }
     }
 `)
 
-export const useGetUsers = () => {
+export const useGetUsers = (data?: PageInput) => {
     return useQuery(FETCH_USERS, {
-        onError: (error) => console.log(error)
+        variables: { data },
+        onError: (error) => console.error(error)
     })
 }
