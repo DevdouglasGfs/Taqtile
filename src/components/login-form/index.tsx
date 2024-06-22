@@ -25,6 +25,7 @@ export default function LoginForm() {
     const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     const passwordRegex = /^[a-zA-Z0-9]+$/;
 
+    // Make the user input validation removing any spaces in the start and end of the input.
     if (emailRegex.test(email.trim())) setValidEmail(true);
     else setValidEmail(false);
     if (passwordRegex.test(password.trim()) && password.trim().length >= 7) setValidPassword(true);
@@ -37,13 +38,18 @@ export default function LoginForm() {
   const [mutateLogin, { error, loading }] = useMutation(LOGIN_MUTATION)
 
   async function login(_?: void) {
+    /**
+     * Try to login with the user data and clear the local storage
+     * if the user has a token because the user with a valid token
+     * will be redirected to another page without the need to login again.
+     */
     try {
       validateInput() && mutateLogin({
         variables: {
           data: userData
         }
       }).then(data => {
-        storeLoginToken(data.data.login.token)
+        storeLoginToken(data.data.login.token) 
         return data.data
       }).catch(error => console.log(error))
 
