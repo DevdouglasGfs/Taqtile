@@ -1,13 +1,21 @@
 import './users-list.css';
 import { useGetUsers } from "../../hooks/useGetUsers";
 import { UserDto } from '../../types/user';
+import { useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import { checkLoginStatus } from '../../utils/auth';
 
 export default function UsersList() {
-    const { data, loading } = useGetUsers();
+    if (!checkLoginStatus()) Navigate({ to: '/login' })
+
+    // Define the offset of the pagination
+    const [offset, setOffset] = useState(0);
+    const { data, loading } = useGetUsers({ offset });
+
 
     return (
         <main className="container">
-            <h1 className="title">Usuários</h1>
+            <h1 className="title">Taqui<span className='highlight'>Usuários</span></h1>
             <table className="users-list">
                 <thead>
                     <tr>
@@ -24,6 +32,10 @@ export default function UsersList() {
                     ))}
                     {loading && <tr><td>Carregando...</td></tr>}
                 </tbody>
+                <div className="pagination-controls">
+                    <button disabled={offset <= 0} onClick={() => setOffset(() => offset - 10)} className="pagination-controls__prev">Anterior</button>
+                    <button onClick={() => setOffset(() => offset + 10)} className="pagination-controls__next">Próximo</button>
+                </div>
             </table>
         </main>
     )
