@@ -102,20 +102,21 @@
     color: #fff;
     font-weight: medium;
     cursor: pointer;
-    transition: background 200ms ease-in;
+    transition: color background 200ms ease-in;
 }
 
-.pagination-controls__prev:disabled {
+.pagination-controls__prev:disabled,
+.pagination-controls__next:disabled {
     background-color: #fff;
     color: rgb(31, 160, 60);
 }
 
 .pagination-controls__prev:active:not(:disabled),
-.pagination-controls__next:active {
+.pagination-controls__next:active:not(:disabled) {
     background-color: rgb(31, 130, 60);
 }
 
 .pagination-controls__prev:active:not(:disabled),
-.pagination-controls__next:active {
+.pagination-controls__next:active:not(:disabled) {
     background-color: rgb(31, 145, 60);
 }
