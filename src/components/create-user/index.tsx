@@ -6,6 +6,7 @@ import { dateIsNotAFutureDate, validateEmail, validatePhone } from "../../utils/
 export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
     const [userData, setUserData] = useState<Omit<UserDto, 'id' | 'birthDate'>>({ name: '', email: '', phone: '', role: 'user' });
     const [birthDate, setBirthDate] = useState<Date>();
+    const requiredAge = 10;
 
     const formatPhoneAndValidate = (phone: string) => {
         const phoneWithJustNumbers = phone.trim().replace(/\D+/g, '')
@@ -13,14 +14,21 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
     }
 
     const [validInputs, setValidInputs] = useState(false)
+    const currentDate = new Date();
+
+    // eslint-disable-next-line
     const validateAllInputs = useEffect(() => {
         // Check if all inputs except birth date are filled
         setValidInputs(
             validateEmail(userData.email) && userData.name
                 && formatPhoneAndValidate(userData.phone) && birthDate
-                && dateIsNotAFutureDate(birthDate) ? true : false
+                && dateIsNotAFutureDate(birthDate)
+                // refactor
+                && birthDate <= new Date(currentDate.getFullYear() - requiredAge, currentDate.getMonth(), currentDate.getDate())
+                && birthDate <= currentDate
+                ? true : false
         );
-    }, [birthDate, userData])
+    })
 
     const dialog = useRef<HTMLDialogElement>(null);
 
@@ -35,6 +43,7 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
         setOpen(false);
     }, [setOpen]);
 
+    // eslint-disable-next-line
     const onClickOutside = useEffect(() => {
         document.addEventListener('mousedown', ({ target }) => {
             if (!dialog.current?.contains(target as Node)) {
@@ -58,23 +67,34 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
                     <div className="create-user__data-group">
                         <fieldset>
                             <h3 className="create-user__title">Dados Pessoais</h3>
-                            <div className="create-user__input-group">
-                                <label htmlFor="name">Nome
+                            <div className="create-user__label-group">
+                                <label className="input-group" htmlFor="name">Nome
                                     <input onChange={ev => setUserData({ ...userData, name: ev.target.value })} placeholder="Nome Completo" value={userData.name} name="name" id="name" type="text" className="create-user__input" autoComplete="name" />
                                 </label>
-                                <label htmlFor="email">Email
+                                <label className="create-user__input-group" htmlFor="email">Email
                                     <input onChange={ev => setUserData({ ...userData, email: ev.target.value })} placeholder="seuemail@email.com" value={userData.email} name="email" id="email" type="email" className="create-user__input" autoComplete="email" />
+                                    {!validateEmail(userData.email) && userData.email.trim() !== '' && <p className="input-group__informative-message">Formato de email inválido.</p>}
                                 </label>
-                                <label htmlFor="phone">Celular
+                                <label className="create-user__input-group" htmlFor="phone">Celular
                                     <input onChange={ev => setUserData({ ...userData, phone: ev.target.value })} placeholder="(99) 99999-9999" value={userData.phone} name="phone" id="phone" type="text" className="create-user__input" autoComplete="tel" />
+                                    {!validatePhone(userData.phone) && userData.phone.trim() !== '' && <p className="input-group__informative-message">Formato de número de telefone inválido ou não suportado.</p>}
                                 </label>
-                                <label htmlFor="p">Celular
-                                    <input onChange={ev => setUserData({ ...userData, phone: ev.target.value })} placeholder="(99) 99999-9999" value={userData.phone} name="phone" id="phone" type="text" className="create-user__input" autoComplete="tel" />
-                                </label>
-                                <label htmlFor="birth-date">Data de Nascimento
+                                <label className="create-user__input-group" htmlFor="birth-date">Data de Nascimento
                                     <input onChange={ev => setBirthDate(new Date(ev.target.value))}
-                                        value={birthDate && birthDate.toISOString().split('T')[0] || new Date().toISOString().split('T')[0]}
+                                        value={
+                                            (birthDate && birthDate.toISOString().split('T')[0])
+                                            || new Date().toISOString().split('T')[0]}
                                         name="birthDate" id="birth-date" type="date" className="create-user__input" />
+                                    {birthDate && !dateIsNotAFutureDate(birthDate) && (
+                                        <p className="input-group__informative-message">A data não pode ser no futuro.</p>
+                                    )}
+
+                                    {/* The provide birthDate should be before of the present date */}
+                                    {birthDate && birthDate <= currentDate
+                                        // The provide birthDate should be before of the same date in (requiredAge) years
+                                        && birthDate <= new Date(currentDate.getFullYear() - requiredAge, currentDate.getMonth(), currentDate.getDate()) && (
+                                            <p className="input-group__informative-message">O usuário precisa ter ao menos 10 anos.</p>
+                                        )}
                                 </label>
                             </div>
                         </fieldset>

@@ -21,8 +21,15 @@ export const validateDate = (date: string | Date) => {
 
 export const dateIsNotAFutureDate = (date: Date, minimunDate?: Date) => {
     const today = new Date()
-    if(minimunDate) return minimunDate < date && date < today;
+    if (minimunDate) return minimunDate < date && date < today;
     return date < today;
+}
+
+export const dateIsEqual = (dateA: Date, dateB: Date) => {
+    const dayA = dateA.getDay(), dayB = dateB.getDay();
+    const monthA = dateA.getMonth(), monthB = dateB.getMonth();
+    const yearA = dateA.getFullYear(), yearB = dateB.getFullYear();
+    return dayA === dayB && monthA === monthB && yearA === yearB
 }
 
 export const validatePhone = (phone: string) => {
