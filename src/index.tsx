@@ -5,6 +5,7 @@ import { setContext } from '@apollo/client/link/context';
 import './index.css'
 import { RouterProvider } from 'react-router-dom';
 import { router } from './routers/root';
+import { checkLoginStatus } from './utils/auth';
 
 export const httpLink = createHttpLink({
   uri: "https://template-onboarding-node-sjz6wnaoia-uc.a.run.app/graphql",
@@ -12,7 +13,7 @@ export const httpLink = createHttpLink({
 
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
-  const token = localStorage.getItem('access-token');
+  const token = checkLoginStatus();
   // return the headers to the context so httpLink can read them
   return {
     headers: {

@@ -7,7 +7,8 @@ export interface UserDto {
     phone: string,
     birthDate: Date,
     email: string,
-    role: "user" | "admin"
+    role: "user" | "admin",
+    password?: string
 }
 
 /**
