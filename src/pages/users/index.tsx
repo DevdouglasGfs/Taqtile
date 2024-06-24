@@ -1,7 +1,7 @@
 import { Outlet, Route, Routes } from "react-router-dom"
-import "./users-list/users-list.css"
+import "./list/users-list.css"
 import { UserManagement } from "./management"
-import UsersList from "./users-list"
+import UsersList from "./list"
 
 export function UsersPage() {
     return <>
