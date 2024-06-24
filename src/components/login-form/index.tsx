@@ -3,12 +3,13 @@ import './login-form.css';
 import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/mutations/loginMutations';
 import { checkLoginStatus, storeLoginToken } from '../../utils/auth';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { UserBasicLoginData } from '../../types/user';
 import { validateEmail, validatePassword } from '../../utils/validators';
 
 export default function LoginForm() {
-  if(checkLoginStatus()) Navigate({to: '/users'})
+  const navigate = useNavigate()
+  if (checkLoginStatus()) navigate('/users', { replace: true })
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -37,25 +38,20 @@ export default function LoginForm() {
 
   const [mutateLogin, { error, loading }] = useMutation(LOGIN_MUTATION)
 
-  async function login(_?: void) {
+  async function login() {
     /**
      * Try to login with the user data and clear the local storage
      * if the user has a token because the user with a valid token
      * will be redirected to another page without the need to login again.
      */
-    try {
-      validateInput() && mutateLogin({
-        variables: {
-          data: userData
-        }
-      }).then(data => {
-        storeLoginToken(data.data.login.token) 
-        return data.data
-      }).catch(error => console.log(error))
-
-    } catch (error) {
-      console.log(error)
-    }
+    validateInput() && mutateLogin({
+      variables: {
+        data: userData
+      }
+    }).then(data => {
+      storeLoginToken(data.data.login.token)
+      return data.data
+    }).catch(error => console.log(error))
   }
 
   return (
@@ -102,7 +98,7 @@ export default function LoginForm() {
           {error && !loading && <p className='info-block_error'>{error.message}</p>}
         </div>
 
-        <button disabled={loading} aria-disabled={loading} type='submit' onClick={(event) => login(event.preventDefault())} className='login-form__submit'>
+        <button disabled={loading} aria-disabled={loading} type='submit' onClick={(ev) => { ev.preventDefault(); login() }} className='login-form__submit'>
           Entrar {loading && <div className="loading-spinner"></div>}
         </button>
       </form>
