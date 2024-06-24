@@ -15,4 +15,4 @@ export interface UserDto {
  * Type which is used to validate the login data.
  * Used in the Login page.
  */
-export type UserBasicLoginData = Required<Pick<UserDto, 'email'> & { password: string }>;
+export type UserBasicLoginData = Required<Pick<UserDto, 'email'|'password'>>;
