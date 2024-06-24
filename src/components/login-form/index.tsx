@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './login-form.css';
+import { validateEmail, validatePassword } from '../../utils/validators';
 
 export interface UserDTO {
   name?: string;
@@ -23,16 +24,16 @@ export default function LoginForm() {
     if (ev.key === 'Enter') validateInput();
   };
 
-  const validateInput = (_?: void) => {
-    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    const passwordRegex = /^[a-zA-Z0-9]+$/;
+  const validateInput = (): boolean => {
 
-    if (emailRegex.test(email.trim())) setValidEmail(true);
+    // Make the user input validation removing any spaces in the start and end of the input.
+    if (validateEmail(email)) setValidEmail(true);
     else setValidEmail(false);
-    if (passwordRegex.test(password.trim()) && password.trim().length >= 7) setValidPassword(true);
+    if (validatePassword(password) && password.trim().length >= 7) setValidPassword(true);
     else setValidPassword(false);
 
     !validEmail || !validPassword ? setShowValidationMessage(true) : setShowValidationMessage(false);
+    return validEmail && validPassword ? true : false
   };
 
   return (
@@ -76,7 +77,7 @@ export default function LoginForm() {
           </fieldset>
         </div>
 
-        <button type='submit' onClick={(event) => validateInput(event.preventDefault())} className='login-form__submit'>
+        <button type='submit' onClick={(event) => {event.preventDefault(); validateInput()}} className='login-form__submit'>
           Entrar
         </button>
       </form>
