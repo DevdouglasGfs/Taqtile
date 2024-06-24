@@ -1,44 +1,39 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { UserDto } from "../../types/user";
-import { dateIsNotAFutureDate, validateEmail, validatePhone } from "../../utils/validators";
+import { dateIsNotAFutureDate, formatPhoneAndValidate, validateEmail, validatePassword, validatePhone } from "../../utils/validators";
+import { CREATE_USER } from "../../graphql/mutations/createUser";
+import { useMutation } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
 
 
 export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
-    const [userData, setUserData] = useState<Omit<UserDto, 'id' | 'birthDate'>>({ name: '', email: '', phone: '', role: 'user' });
-    const [birthDate, setBirthDate] = useState<Date>();
+    const navigate = useNavigate();
+    const [userData, setUserData] = useState<Required<Omit<UserDto, 'id'>>>({ name: '', email: '', phone: '', role: 'user', birthDate: new Date(), password: '' });
     const requiredAge = 10;
-
-    const formatPhoneAndValidate = (phone: string) => {
-        const phoneWithJustNumbers = phone.trim().replace(/\D+/g, '')
-        return validatePhone(phoneWithJustNumbers)
-    }
 
     const [validInputs, setValidInputs] = useState(false)
     const currentDate = new Date();
 
-    // eslint-disable-next-line
-    const validateAllInputs = useEffect(() => {
-        // Check if all inputs except birth date are filled
+    const validateAllInputs = () => {
+        // Check if all inputs are filled
         setValidInputs(
             validateEmail(userData.email) && userData.name
-                && formatPhoneAndValidate(userData.phone) && birthDate
-                && dateIsNotAFutureDate(birthDate)
+                && formatPhoneAndValidate(userData.phone)
+                && dateIsNotAFutureDate(userData.birthDate)
+                && validatePassword(userData.password)
+                && userData.password.trim().length >= 7
                 // refactor
-                && birthDate <= new Date(currentDate.getFullYear() - requiredAge, currentDate.getMonth(), currentDate.getDate())
-                && birthDate <= currentDate
+                && userData.birthDate <= new Date(currentDate.getFullYear() - requiredAge, currentDate.getMonth(), currentDate.getDate())
+                && userData.birthDate <= currentDate
                 ? true : false
         );
-    })
+    }
+    useMemo(validateAllInputs, [userData])
 
     const dialog = useRef<HTMLDialogElement>(null);
 
     const onClose = useCallback(() => {
-        setUserData({
-            name: "",
-            email: "",
-            phone: "",
-            role: "user"
-        });
+        setUserData({ name: "", email: "", phone: "", role: "user", birthDate: new Date(), password: "" });
         dialog.current?.close();
         setOpen(false);
     }, [setOpen]);
@@ -46,16 +41,21 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
     // eslint-disable-next-line
     const onClickOutside = useEffect(() => {
         document.addEventListener('mousedown', ({ target }) => {
-            if (!dialog.current?.contains(target as Node)) {
-                onClose()
-            }
+            if (!dialog.current?.contains(target as Node)) onClose()
         })
     })
 
-    const create = () => {
+
+    const [mutateUser, { loading }] = useMutation(CREATE_USER)
+
+    const create = async () => {
         if (!userData || !validInputs) return
         else {
-            onClose()
+            await mutateUser({
+                variables: { data: userData },
+                onError: (error) => alert(JSON.stringify(`${error.name}: ${error.message}`)),
+                onCompleted: () => navigate('/users/list')
+            }).finally(() => onClose())
         }
     }
 
@@ -79,20 +79,25 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
                                     <input onChange={ev => setUserData({ ...userData, phone: ev.target.value })} placeholder="(99) 99999-9999" value={userData.phone} name="phone" id="phone" type="text" className="create-user__input" autoComplete="tel" />
                                     {!validatePhone(userData.phone) && userData.phone.trim() !== '' && <p className="input-group__informative-message">Formato de número de telefone inválido ou não suportado.</p>}
                                 </label>
+                                <label className="create-user__input-group" htmlFor="password">Senha
+                                    <input onChange={ev => setUserData({ ...userData, password: ev.target.value })} placeholder="Senha" value={userData.password} name="password" id="password" type="password" className="create-user__input" autoComplete="new-password" />
+                                    {userData.password.trim().length < 7 && userData.password.trim() !== '' && <p className="input-group__informative-message">A senha deve ter ao menos 7 caractéres.</p>}
+                                    {!validatePassword(userData.password) && userData.password.trim() !== '' && <p className="input-group__informative-message">A senha deve ser composta por caractéres alfánumericos.</p>}
+                                </label>
                                 <label className="create-user__input-group" htmlFor="birth-date">Data de Nascimento
-                                    <input onChange={ev => setBirthDate(new Date(ev.target.value))}
+                                    <input onChange={ev => setUserData({ ...userData, birthDate: new Date(ev.target.value) })}
                                         value={
-                                            (birthDate && birthDate.toISOString().split('T')[0])
+                                            (userData.birthDate.toISOString().split('T')[0])
                                             || new Date().toISOString().split('T')[0]}
                                         name="birthDate" id="birth-date" type="date" className="create-user__input" />
-                                    {birthDate && !dateIsNotAFutureDate(birthDate) && (
+                                    {!dateIsNotAFutureDate(userData.birthDate) && (
                                         <p className="input-group__informative-message">A data não pode ser no futuro.</p>
                                     )}
 
                                     {/* The provide birthDate should be before of the present date */}
-                                    {birthDate && birthDate <= currentDate
+                                    {userData.birthDate < currentDate
                                         // The provide birthDate should be before of the same date in (requiredAge) years
-                                        && birthDate <= new Date(currentDate.getFullYear() - requiredAge, currentDate.getMonth(), currentDate.getDate()) && (
+                                        && userData.birthDate >= new Date(currentDate.getFullYear() - requiredAge, currentDate.getMonth(), currentDate.getDate()) && (
                                             <p className="input-group__informative-message">O usuário precisa ter ao menos 10 anos.</p>
                                         )}
                                 </label>
@@ -112,7 +117,7 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
                     </div>
                     <div className="create-user__action-group">
                         <button type="button" onClick={() => { onClose() }} className="create-user__cancel-cta">Cancelar</button>
-                        <button disabled={validInputs ? false : true} type="submit" onClick={(ev) => { ev.preventDefault(); create() }} className="create-user__add-cta">Adicionar</button>
+                        <button disabled={loading || (validInputs ? false : true)} type="submit" onClick={(ev) => { ev.preventDefault(); create() }} className="create-user__add-cta">Adicionar</button>
                     </div>
                 </form>
             </dialog>
