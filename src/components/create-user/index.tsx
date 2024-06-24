@@ -9,10 +9,11 @@ import { useNavigate } from "react-router-dom";
 export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
     const navigate = useNavigate();
     const [userData, setUserData] = useState<Required<Omit<UserDto, 'id'>>>({ name: '', email: '', phone: '', role: 'user', birthDate: new Date(), password: '' });
-    const requiredAge = 0;
+    const requiredAge = 10;
 
     const [validInputs, setValidInputs] = useState(false)
-    const currentDate = new Date();
+    let currentDate = useRef(new Date());
+    useMemo(() => { currentDate.current = new Date() }, [currentDate])
 
     const validateAllInputs = () => {
         // Check if all inputs are filled
@@ -22,8 +23,8 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
                 && dateIsNotAFutureDate(userData.birthDate)
                 && validatePassword(userData.password)
                 && userData.password.trim().length >= 7
-                && userData.birthDate <= new Date(currentDate.getFullYear() - requiredAge, currentDate.getMonth(), currentDate.getDate())
-                && userData.birthDate <= currentDate
+                && userData.birthDate <= new Date(currentDate.current.getFullYear() - requiredAge, currentDate.current.getMonth(), currentDate.current.getDate())
+                && userData.birthDate <= currentDate.current
                 ? true : false
         );
     }
@@ -44,8 +45,18 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
         })
     })
 
+    function userHasMinimuAge() {
+        // The provide birthDate should be before of the present date
+        return requiredAge && requiredAge > 0 && userData.birthDate < currentDate.current
+            // The provide birthDate should be before of the same date in (requiredAge) 
+            && userData.birthDate > new Date(currentDate.current.getFullYear() - requiredAge, currentDate.current.getMonth(), currentDate.current.getDate())
+    }
 
-    const [mutateUser, { loading }] = useMutation(CREATE_USER)
+    function handleInput(ev: React.ChangeEvent<HTMLInputElement>) {
+        setUserData({ ...userData, [ev.target.name]: ev.target.value })
+    }
+
+    const [mutateUser, { loading, error }] = useMutation(CREATE_USER)
 
     const create = async () => {
         if (!userData || !validInputs) return
@@ -68,23 +79,23 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
                             <h3 className="create-user__title">Dados Pessoais</h3>
                             <div className="create-user__label-group">
                                 <label className="input-group" htmlFor="name">Nome
-                                    <input onChange={ev => setUserData({ ...userData, name: ev.target.value })} placeholder="Nome Completo" value={userData.name} name="name" id="name" type="text" className="create-user__input" autoComplete="name" />
+                                    <input required onChange={handleInput} placeholder="Nome Completo" value={userData.name} name="name" id="name" type="text" className="create-user__input" autoComplete="name" />
                                 </label>
                                 <label className="create-user__input-group" htmlFor="email">Email
-                                    <input onChange={ev => setUserData({ ...userData, email: ev.target.value })} placeholder="seuemail@email.com" value={userData.email} name="email" id="email" type="email" className="create-user__input" autoComplete="email" />
+                                    <input required onChange={handleInput} placeholder="seuemail@email.com" value={userData.email} name="email" id="email" type="email" className="create-user__input" autoComplete="email" />
                                     {!validateEmail(userData.email) && userData.email.trim() !== '' && <p className="input-group__informative-message">Formato de email inválido.</p>}
                                 </label>
                                 <label className="create-user__input-group" htmlFor="phone">Celular
-                                    <input onChange={ev => setUserData({ ...userData, phone: ev.target.value })} placeholder="(99) 99999-9999" value={userData.phone} name="phone" id="phone" type="text" className="create-user__input" autoComplete="tel" />
+                                    <input required onChange={handleInput} placeholder="(99) 99999-9999" value={userData.phone} name="phone" id="phone" type="text" className="create-user__input" autoComplete="tel" />
                                     {!validatePhone(userData.phone) && userData.phone.trim() !== '' && <p className="input-group__informative-message">Formato de número de telefone inválido ou não suportado.</p>}
                                 </label>
                                 <label className="create-user__input-group" htmlFor="password">Senha
-                                    <input onChange={ev => setUserData({ ...userData, password: ev.target.value })} placeholder="Senha" value={userData.password} name="password" id="password" type="password" className="create-user__input" autoComplete="new-password" />
+                                    <input required onChange={handleInput} placeholder="Senha" value={userData.password} name="password" id="password" type="password" className="create-user__input" autoComplete="new-password" />
                                     {userData.password.trim().length < 7 && userData.password.trim() !== '' && <p className="input-group__informative-message">A senha deve ter ao menos 7 caractéres.</p>}
                                     {!validatePassword(userData.password) && userData.password.trim() !== '' && <p className="input-group__informative-message">A senha deve ser composta por caractéres alfánumericos.</p>}
                                 </label>
                                 <label className="create-user__input-group" htmlFor="birth-date">Data de Nascimento
-                                    <input onChange={ev => setUserData({ ...userData, birthDate: new Date(ev.target.value) })}
+                                    <input required onChange={({ target: { value } }) => setUserData({ ...userData, birthDate: new Date(value) })}
                                         value={
                                             (userData.birthDate.toISOString().split('T')[0])
                                             || new Date().toISOString().split('T')[0]}
@@ -94,26 +105,25 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
                                     )}
 
                                     {/* The provide birthDate should be before of the present date */}
-                                    {userData.birthDate < currentDate
-                                        // The provide birthDate should be before of the same date in (requiredAge) years
-                                        && userData.birthDate >= new Date(currentDate.getFullYear() - requiredAge, currentDate.getMonth(), currentDate.getDate()) && (
-                                            <p className="input-group__informative-message">O usuário precisa ter ao menos 10 anos.</p>
-                                        )}
+                                    {(userHasMinimuAge() && (
+                                        <p className="input-group__informative-message">O usuário precisa ter ao menos {requiredAge} anos.</p>
+                                    )) || ''}
                                 </label>
                             </div>
                         </fieldset>
                         <fieldset className="create-user__input-group_inline">
                             <h3 className="create-user__title">Nível de Permissões</h3>
                             <label htmlFor="user-role">
-                                <input onChange={() => setUserData({ ...userData, role: "user" })} value={userData.role} name="role" id="user-role" type="radio" className="create-user__input" defaultChecked />
+                                <input onChange={handleInput} value={"user"} name="role" id="user-role" type="radio" className="create-user__input" defaultChecked />
                                 <span>Usuário</span>
                             </label>
                             <label htmlFor="admin-role">
-                                <input onChange={() => setUserData({ ...userData, role: "admin" })} value={userData.role} name="role" id="admin-role" type="radio" className="create-user__input" />
+                                <input onChange={handleInput} value={"admin"} name="role" id="admin-role" type="radio" className="create-user__input" />
                                 <span>Administrador</span>
                             </label>
                         </fieldset>
                     </div>
+                    {error && !loading && <p className='info-block_error'>{error.message}</p>}
                     <div className="create-user__action-group">
                         <button type="button" onClick={() => { onClose() }} className="create-user__cancel-cta">Cancelar</button>
                         <button disabled={loading || (validInputs ? false : true)} type="submit" onClick={(ev) => { ev.preventDefault(); create() }} className="create-user__add-cta">Adicionar</button>
