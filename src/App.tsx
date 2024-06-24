@@ -1,7 +1,4 @@
-import React from 'react'
+import LoginPage from "./pages/login-page";
 
-function App() {
-	return <div className="App">Hello World</div>
-}
-
-export default App
+const App: React.FC = () => <LoginPage />;
+export default App;

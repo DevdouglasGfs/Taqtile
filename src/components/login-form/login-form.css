@@ -1,0 +1,18 @@
+.login-form {
+  max-width: 100cqw;
+  min-width: fit-content;
+  margin: 0;
+  background-color: inherit;
+  box-shadow: 0 8px 48px hsl(0, 0, 70);
+  border-radius: 24px;
+}
+.login-form__title {
+  font-size: 32px;
+  text-align: center;
+}
+
+@media screen and (max-width: 600px) {
+  .login-form {
+    max-width: 700px;
+  }
+}
