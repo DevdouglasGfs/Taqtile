@@ -24,7 +24,7 @@ export default function LoginForm() {
     if (ev.key === 'Enter') validateInput();
   };
 
-  const validateInput =  => {
+  const validateInput = () => {
     // Make the user input validation removing any spaces in the start and end of the input.
     if (validateEmail(userData.email)) setValidEmail(true);
     else setValidEmail(false);
