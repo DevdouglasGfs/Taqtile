@@ -1,10 +1,9 @@
 export module Patterns {
-    export const emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    export const emailPattern = /^[-!#$%&'*+/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+/0-9=?A-Z^_a-z{|}~])*@[a-zA-Z](-?[a-zA-Z0-9])*(\.[a-zA-Z](-?[a-zA-Z0-9])*)+$/
     export const passwordPattern = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]+$/;
     export const phonePattern = /^\d{10,11}$/;
     export const phonePatternWithAreaCode = /^\(\d{2,3}\) \d{4,5}-\d{4}$/;
     export const phonePatternWithoutAreaCode = /^\d{4,5}-\d{4}$/;
-    export const birthDatePattern = /^\d{4}-\d{2}-\d{2}$/;
 }
 
 export const validateEmail = (email: string) => {
@@ -13,10 +12,6 @@ export const validateEmail = (email: string) => {
 
 export const validatePassword = (pass: string) => {
     return Patterns.passwordPattern.test(pass.trim())
-}
-
-export const validateDate = (date: string | Date) => {
-    return date instanceof Date && Patterns.birthDatePattern.test(date.toString())
 }
 
 export const dateIsNotAFutureDate = (date: Date, minimunDate?: Date) => {
