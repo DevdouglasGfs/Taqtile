@@ -1,6 +1,6 @@
 export module Patterns {
     export const emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    export const passwordPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+$/;
+    export const passwordPattern = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]+$/;
     export const phonePattern = /^\d{10,11}$/;
     export const phonePatternWithAreaCode = /^\(\d{2,3}\) \d{4,5}-\d{4}$/;
     export const phonePatternWithoutAreaCode = /^\d{4,5}-\d{4}$/;
@@ -34,4 +34,9 @@ export const dateIsEqual = (dateA: Date, dateB: Date) => {
 
 export const validatePhone = (phone: string) => {
     return Patterns.phonePattern.test(phone.trim()) || Patterns.phonePatternWithAreaCode.test(phone.trim()) || Patterns.phonePatternWithoutAreaCode.test(phone.trim())
+}
+
+export const formatPhoneAndValidate = (phone: string) => {
+    const phoneWithJustNumbers = phone.trim().replace(/\D+/g, '')
+    return validatePhone(phoneWithJustNumbers)
 }
