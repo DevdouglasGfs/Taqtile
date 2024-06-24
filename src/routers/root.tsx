@@ -1,10 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import LoginPage from "../pages/login";
-import ErrorPage from "../pages/error-page";
 import { UsersPage } from "../pages/users";
 import { UserManagement } from "../pages/users/management";
-import UsersList from "../pages/users/users-list/users-list";
+import UsersList from "../pages/users/users-list";
+import ErrorPage from "../pages/error-page";
 
 export const router = createBrowserRouter([{
     path: "/",
@@ -18,9 +18,9 @@ export const router = createBrowserRouter([{
     element: <UsersPage />,
     children: [{
         path: "list",
-        element: <UsersList />
+        element: <UsersList />,
     },{
         path: "management",
-        element: <UserManagement />
+        element: <UserManagement />,
     }]
 }])
