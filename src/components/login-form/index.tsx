@@ -11,47 +11,43 @@ export default function LoginForm() {
   const navigate = useNavigate()
   if (checkLoginStatus()) navigate('/users', { replace: true })
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
   const [validEmail, setValidEmail] = useState(false);
   const [validPassword, setValidPassword] = useState(false);
   const [showValidationMessage, setShowValidationMessage] = useState(false);
 
-  const userData = { email, password } as UserBasicLoginData;
+  const [userData, setUserData] = useState<UserBasicLoginData>({
+    email: '',
+    password: ''
+  });
 
   onkeydown = (ev) => {
     if (ev.key === 'Enter') validateInput();
   };
 
-  const validateInput = (): boolean => {
-
+  const validateInput =  => {
     // Make the user input validation removing any spaces in the start and end of the input.
-    if (validateEmail(email)) setValidEmail(true);
+    if (validateEmail(userData.email)) setValidEmail(true);
     else setValidEmail(false);
-    if (validatePassword(password) && password.trim().length >= 7) setValidPassword(true);
+    if (validatePassword(userData.password) && userData.password.trim().length >= 7) setValidPassword(true);
     else setValidPassword(false);
 
     !validEmail || !validPassword ? setShowValidationMessage(true) : setShowValidationMessage(false);
-    return validEmail && validPassword ? true : false
+    return validEmail && validPassword
   };
 
   const [mutateLogin, { error, loading }] = useMutation(LOGIN_MUTATION)
 
+  function handleInput({ target }: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = target;
+    setUserData({ ...userData, [name]: value })
+  }
+
   async function login() {
-    /**
-     * Try to login with the user data and clear the local storage
-     * if the user has a token because the user with a valid token
-     * will be redirected to another page without the need to login again.
-     */
     validateInput() && mutateLogin({
-      variables: {
-        data: userData
-      }
-    }).then(data => {
-      storeLoginToken(data.data.login.token)
-      return data.data
-    }).catch(error => console.log(error))
+      variables: { data: userData },
+      onCompleted: () => navigate('/users/list', { replace: true }),
+      onError: (error) => console.log(error)
+    }).then(({ data: { login: { token } } }) => storeLoginToken(token))
   }
 
   return (
@@ -60,15 +56,14 @@ export default function LoginForm() {
         <h1 className='login-form__title'>Bem-vindo(a) à Taqtile!</h1>
         <div className='login-form__user-input'>
           <fieldset>
-            {/* Can be Refactored */}
             <label htmlFor='email' className='input-group'>
               Email
               <input
                 id='email'
                 name='email'
                 required
-                value={email}
-                onChange={(ev) => setEmail(ev.target.value)}
+                value={userData.email}
+                onChange={handleInput}
                 type='email'
                 className='input-group__input'
                 autoComplete='email'
@@ -81,13 +76,13 @@ export default function LoginForm() {
                 id='password'
                 name='password'
                 required
-                value={password}
-                onChange={(ev) => setPassword(ev.target.value)}
+                value={userData.password}
+                onChange={handleInput}
                 type='password'
                 autoComplete='current-password'
                 className='input-group__input'
               />
-              {showValidationMessage && password.trim().length < 7 && (
+              {showValidationMessage && userData.password.trim().length < 7 && (
                 <p className='input-group__informative-message'>A senha deve ter ao menos 7 caractéres.</p>
               )}
               {showValidationMessage && !validPassword && (

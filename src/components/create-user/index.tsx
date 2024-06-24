@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
     const navigate = useNavigate();
     const [userData, setUserData] = useState<Required<Omit<UserDto, 'id'>>>({ name: '', email: '', phone: '', role: 'user', birthDate: new Date(), password: '' });
-    const requiredAge = 10;
+    const requiredAge = 0;
 
     const [validInputs, setValidInputs] = useState(false)
     const currentDate = new Date();
@@ -22,7 +22,6 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
                 && dateIsNotAFutureDate(userData.birthDate)
                 && validatePassword(userData.password)
                 && userData.password.trim().length >= 7
-                // refactor
                 && userData.birthDate <= new Date(currentDate.getFullYear() - requiredAge, currentDate.getMonth(), currentDate.getDate())
                 && userData.birthDate <= currentDate
                 ? true : false
