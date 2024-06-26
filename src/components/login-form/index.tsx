@@ -1,9 +1,10 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import './login-form.css';
 import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/mutations/loginMutations';
 import { storeLoginToken } from '../../utils/auth';
 import { UserDto } from '../../types/user';
+import { validateEmail, validatePassword } from '../../utils/validators';
 
 export type UserBasicLoginData = Required<Pick<UserDto, 'email'> & { password: string }>;
 
@@ -22,13 +23,11 @@ export default function LoginForm() {
   };
 
   const validateInput = (): boolean => {
-    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    const passwordRegex = /^[a-zA-Z0-9]+$/;
 
     // Make the user input validation removing any spaces in the start and end of the input.
-    if (emailRegex.test(email.trim())) setValidEmail(true);
+    if (validateEmail(email)) setValidEmail(true);
     else setValidEmail(false);
-    if (passwordRegex.test(password.trim()) && password.trim().length >= 7) setValidPassword(true);
+    if (validatePassword(password) && password.trim().length >= 7) setValidPassword(true);
     else setValidPassword(false);
 
     !validEmail || !validPassword ? setShowValidationMessage(true) : setShowValidationMessage(false);
