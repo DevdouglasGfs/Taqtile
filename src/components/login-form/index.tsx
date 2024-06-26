@@ -9,9 +9,7 @@ import { validateEmail, validatePassword } from '../../utils/validators';
 
 export default function LoginForm() {
   const navigate = useNavigate()
-  if (checkLoginStatus()) navigate('/users', { replace: true }) 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  if (checkLoginStatus()) navigate('/users', { replace: true })
 
   const [validEmail, setValidEmail] = useState(false);
   const [validPassword, setValidPassword] = useState(false);
@@ -21,6 +19,7 @@ export default function LoginForm() {
     email: '',
     password: ''
   });
+  const { email, password } = userData;
 
   onkeydown = (ev) => {
     if (ev.key === 'Enter') login();
@@ -50,7 +49,7 @@ export default function LoginForm() {
       variables: { data: userData },
       onCompleted: () => navigate('/users/list', { replace: true }),
       onError: (error) => console.log(error)
-    }).then(({ data: { login: { token } } }) => storeLoginToken(token))
+    }).then(({ data: { login: { token } } }) => storeLoginToken(token)).catch(error => console.log(error))
   }
 
   return (
@@ -95,10 +94,10 @@ export default function LoginForm() {
           </fieldset>
         </div>
 
-        <button disabled={loading} aria-disabled={loading} type='submit' onClick={(ev) => { ev.preventDefault(); login() }} className='login-form__submit'>
-          Entrar {loading && <div className="loading-spinner"></div>}
         {loading && <p className='info-block__loading'>Carregando...</p>}
         {error && <p className='info-block__error'>{error.message}</p>}
+        <button disabled={loading} aria-disabled={loading} type='submit' onClick={(ev) => { ev.preventDefault(); login() }} className='login-form__submit'>
+          Entrar {loading && <div className="loading-spinner"></div>}
         </button>
       </form>
     </>
