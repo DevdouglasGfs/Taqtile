@@ -4,7 +4,22 @@ import { dateIsNotAFutureDate, formatPhoneAndValidate, validateEmail, validatePa
 import { CREATE_USER } from "../../graphql/mutations/createUser";
 import { useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
+import { Heading } from "../common/heading";
+import styled from "styled-components";
+import { Modal } from "../common/modal";
+import { GridWrapper, Wrapper } from "../common/wrapper";
+import { Input } from "../common/input";
+import { Label } from "../common/label";
+import { Cta } from "../common/cta";
+import { StatusBlock } from "../common/statusBlock";
 
+const ModalHeading = styled(Heading)`
+    font-size: 1.5rem;
+`;
+const CustomGridWrapper = styled(GridWrapper)`
+    padding: 0;
+    gap: 1rem;
+`;
 
 export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
     const navigate = useNavigate();
@@ -30,18 +45,17 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
     }
     useMemo(validateAllInputs, [userData])
 
-    const dialog = useRef<HTMLDialogElement>(null);
+    const modal = useRef<HTMLDivElement>(null);
 
     const onClose = useCallback(() => {
         setUserData({ name: "", email: "", phone: "", role: "user", birthDate: new Date(), password: "" });
-        dialog.current?.close();
         setOpen(false);
     }, [setOpen]);
 
     // eslint-disable-next-line
     const onClickOutside = useEffect(() => {
         document.addEventListener('mousedown', ({ target }) => {
-            if (!dialog.current?.contains(target as Node)) onClose()
+            if (!modal.current?.contains(target as Node)) onClose()
         })
     })
 
@@ -71,65 +85,65 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
 
     return (
         <>
-            <dialog ref={dialog} open={open} className="create-user">
+            <Modal ref={modal} open={open} className="create-user">
                 <form method="post" className="create-user__form">
-                    <h2 className="create-user__title">Criar Usuário</h2>
-                    <div className="create-user__data-group">
+                    <ModalHeading as="h2">Criar Usuário</ModalHeading>
+                    <Wrapper $dir="column" $align="start" $gap="2rem">
                         <fieldset>
-                            <h3 className="create-user__title">Dados Pessoais</h3>
-                            <div className="create-user__label-group">
-                                <label className="input-group" htmlFor="name">Nome
-                                    <input required onChange={handleInput} placeholder="Nome Completo" value={userData.name} name="name" id="name" type="text" className="create-user__input" autoComplete="name" />
-                                </label>
-                                <label className="create-user__input-group" htmlFor="email">Email
-                                    <input required onChange={handleInput} placeholder="seuemail@email.com" value={userData.email} name="email" id="email" type="email" className="create-user__input" autoComplete="email" />
-                                    {!validateEmail(userData.email) && userData.email.trim() !== '' && <p className="input-group__informative-message">Formato de email inválido.</p>}
-                                </label>
-                                <label className="create-user__input-group" htmlFor="phone">Celular
-                                    <input required onChange={handleInput} placeholder="(99) 99999-9999" value={userData.phone} name="phone" id="phone" type="text" className="create-user__input" autoComplete="tel" />
-                                    {!validatePhone(userData.phone) && userData.phone.trim() !== '' && <p className="input-group__informative-message">Formato de número de telefone inválido ou não suportado.</p>}
-                                </label>
-                                <label className="create-user__input-group" htmlFor="password">Senha
-                                    <input required onChange={handleInput} placeholder="Senha" value={userData.password} name="password" id="password" type="password" className="create-user__input" autoComplete="new-password" />
-                                    {userData.password.trim().length < 7 && userData.password.trim() !== '' && <p className="input-group__informative-message">A senha deve ter ao menos 7 caractéres.</p>}
-                                    {!validatePassword(userData.password) && userData.password.trim() !== '' && <p className="input-group__informative-message">A senha deve ser composta por caractéres alfánumericos.</p>}
-                                </label>
-                                <label className="create-user__input-group" htmlFor="birth-date">Data de Nascimento
-                                    <input required onChange={({ target: { value } }) => setUserData({ ...userData, birthDate: new Date(value) })}
+                            <Heading as="h3">Dados Pessoais</Heading>
+                            <CustomGridWrapper $align="start">
+                                <Label htmlFor="name">Nome
+                                    <Input required onChange={handleInput} placeholder="Nome Completo" value={userData.name} name="name" id="name" type="text" autoComplete="name" />
+                                </Label>
+                                <Label htmlFor="email">Email
+                                    <Input required onChange={handleInput} placeholder="seuemail@email.com" value={userData.email} name="email" id="email" type="email" autoComplete="email" />
+                                    {!validateEmail(userData.email) && userData.email.trim() !== '' && <p>Formato de email inválido.</p>}
+                                </Label>
+                                <Label htmlFor="phone">Celular
+                                    <Input required onChange={handleInput} placeholder="(99) 99999-9999" value={userData.phone} name="phone" id="phone" type="text" autoComplete="tel" />
+                                    {!validatePhone(userData.phone) && userData.phone.trim() !== '' && <p>Formato de número de telefone inválido ou não suportado.</p>}
+                                </Label>
+                                <Label htmlFor="password">Senha
+                                    <Input required onChange={handleInput} placeholder="Senha" value={userData.password} name="password" id="password" type="password" autoComplete="new-password" />
+                                    {userData.password.trim().length < 7 && userData.password.trim() !== '' && <p>A senha deve ter ao menos 7 caractéres.</p>}
+                                    {!validatePassword(userData.password) && userData.password.trim() !== '' && <p>A senha deve ser composta por caractéres alfánumericos.</p>}
+                                </Label>
+                                <Label htmlFor="birth-date">Data de Nascimento
+                                    <Input required onChange={({ target: { value } }) => setUserData({ ...userData, birthDate: new Date(value) })}
                                         value={
                                             (userData.birthDate.toISOString().split('T')[0])
                                             || new Date().toISOString().split('T')[0]}
-                                        name="birthDate" id="birth-date" type="date" className="create-user__input" />
+                                        name="birthDate" id="birth-date" type="date" />
                                     {!dateIsNotAFutureDate(userData.birthDate) && (
-                                        <p className="input-group__informative-message">A data não pode ser no futuro.</p>
+                                        <p>A data não pode ser no futuro.</p>
                                     )}
 
                                     {/* The provide birthDate should be before of the present date */}
                                     {(userHasMinimuAge() && (
-                                        <p className="input-group__informative-message">O usuário precisa ter ao menos {requiredAge} anos.</p>
+                                        <p>O usuário precisa ter ao menos {requiredAge} anos.</p>
                                     )) || ''}
-                                </label>
-                            </div>
+                                </Label>
+                            </CustomGridWrapper>
                         </fieldset>
-                        <fieldset className="create-user__input-group_inline">
-                            <h3 className="create-user__title">Nível de Permissões</h3>
-                            <label htmlFor="user-role">
-                                <input onChange={handleInput} value={"user"} name="role" id="user-role" type="radio" className="create-user__input" defaultChecked />
+                        <fieldset>
+                            <Heading as="h3">Nível de Permissões</Heading>
+                            <Label $dir="row" htmlFor="user-role">
+                                <Input onChange={handleInput} value={"user"} name="role" id="user-role" type="radio" defaultChecked />
                                 <span>Usuário</span>
-                            </label>
-                            <label htmlFor="admin-role">
-                                <input onChange={handleInput} value={"admin"} name="role" id="admin-role" type="radio" className="create-user__input" />
+                            </Label>
+                            <Label $dir="row" htmlFor="admin-role">
+                                <Input onChange={handleInput} value={"admin"} name="role" id="admin-role" type="radio" />
                                 <span>Administrador</span>
-                            </label>
+                            </Label>
                         </fieldset>
-                    </div>
-                    {error && !loading && <p className='info-block_error'>{error.message}</p>}
-                    <div className="create-user__action-group">
-                        <button type="button" onClick={() => { onClose() }} className="create-user__cancel-cta">Cancelar</button>
-                        <button disabled={loading || (validInputs ? false : true)} type="submit" onClick={(ev) => { ev.preventDefault(); create() }} className="create-user__add-cta">Adicionar</button>
-                    </div>
+                    </Wrapper>
+                    {error && !loading && <StatusBlock $status="error"><p>{error.message}</p></StatusBlock>}
+                    <Wrapper>
+                        <Cta type="button" onClick={() => { onClose() }}>Cancelar</Cta>
+                        <Cta disabled={loading || (validInputs ? false : true)} type="submit" onClick={(ev) => { ev.preventDefault(); create() }}>Adicionar</Cta>
+                    </Wrapper>
                 </form>
-            </dialog>
+            </Modal>
         </>
     )
 }
