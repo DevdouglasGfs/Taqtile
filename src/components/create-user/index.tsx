@@ -77,18 +77,18 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
         else {
             await mutateUser({
                 variables: { data: userData },
-                onError: (error) => alert(JSON.stringify(`${error.name}: ${error.message}`)),
-                onCompleted: () => navigate('/users/list')
+                onError: (error) => console.error(`${error.name}: ${error.message}. ErrorObject: ${JSON.stringify(error)}`),
+                onCompleted: () => navigate('/users')
             }).finally(() => onClose())
         }
     }
 
     return (
         <>
-            <Modal ref={modal} open={open} className="create-user">
-                <form method="post" className="create-user__form">
+            <Modal ref={modal} open={open}>
+                <form method="post">
                     <ModalHeading as="h2">Criar Usuário</ModalHeading>
-                    <Wrapper $dir="column" $align="start" $gap="2rem">
+                    <Wrapper $padding="0" $dir="column" $align="start" $gap="2rem">
                         <fieldset>
                             <Heading as="h3">Dados Pessoais</Heading>
                             <CustomGridWrapper $align="start">

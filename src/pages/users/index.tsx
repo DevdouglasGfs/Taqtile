@@ -40,7 +40,7 @@ export function UsersPage() {
         <ThemeProvider theme={theme}>
             <Routes>
                 <Route path="/" element={<>
-                    <main className="container">
+                    <main>
                         <Hero>
                             <Heading>
                                 <span>Dashboard</span>

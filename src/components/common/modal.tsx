@@ -47,7 +47,7 @@ export const Modal = styled.div<ModalProps>`
     & form {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 2rem;
         width: 100%;
         height: 100%;
         padding: 2rem;
