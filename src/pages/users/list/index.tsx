@@ -1,9 +1,28 @@
-import './users-list.css';
 import { useGetUsers } from "../../../hooks/useGetUsers";
 import { UserDto } from '../../../types/user';
 import { useState } from 'react';
 import { checkLoginStatus } from '../../../utils/auth';
 import { useNavigate } from 'react-router-dom';
+import { Heading } from "../../../components/common/heading";
+import styled from "styled-components";
+import { Table } from "../../../components/common/table";
+import { Wrapper } from "../../../components/common/wrapper";
+import { Cta } from "../../../components/common/cta";
+import { Spinner } from "../../../components/common/spinner";
+
+const CustomHeading = styled(Heading)`
+    font-size: 1.5rem;
+
+    & span {
+        display: inline-block;
+    }
+`;
+
+const Container = styled.main`
+    width: 100%;
+    max-width: 70cqw;
+    margin: 0 auto;
+`;
 
 export default function UsersList() {
     const navigate = useNavigate();
@@ -14,29 +33,38 @@ export default function UsersList() {
     const { data, loading, error } = useGetUsers({ offset });
 
     return (
-        <main className="container">
-            <h1 className="title">Taqui<span className='highlight'>Usuários</span></h1>
-            <table className="users-list">
-                <thead>
-                    <tr>
-                        <th className="users-list__title">Nome</th>
-                        <th className="users-list__title">Email</th>
-                    </tr>
-                </thead>
-                <tbody className="users-list__collection">
-                    {data?.users.nodes.map((user: UserDto) => (
-                        <tr key={user.id} className="users-list__item">
-                            <td className="users-list__data">{user.name}</td>
-                            <td className="users-list__data">{user.email}</td>
+        <Container>
+            <Wrapper $dir="column">
+                <CustomHeading as="h2">Lista de <span className='highlight'>Usuários</span></CustomHeading>
+                <Table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
                         </tr>
-                    ))}
-                    {loading && <tr><td>Carregando...</td></tr>}
-                </tbody>
-                <div className="pagination-controls">
-                    <button disabled={offset <= 0} onClick={() => setOffset(() => offset - 10)} className="pagination-controls__prev">Anterior</button>
-                    <button disabled={!!error || loading} onClick={() => setOffset(() => offset + 10)} className="pagination-controls__next">Próximo</button>
-                </div>
-            </table>
-        </main>
+                    </thead>
+                    <tbody>
+                        {data?.users.nodes.map((user: UserDto) => (
+                            <tr onClick={() => navigate(`/users/user/${user.id}`)} key={user.id}>
+                                <td>{user.name}</td>
+                                <td>{user.email}</td>
+                            </tr>
+                        ))}
+                        {loading && (
+                            <tr>
+                                <Wrapper as="td" $align="center" $justify="center">
+                                    <Spinner />
+                                    Carregando...
+                                </Wrapper>
+                                <td></td>
+                            </tr>)}
+                    </tbody>
+                    <Wrapper>
+                        <Cta disabled={offset <= 0} onClick={() => setOffset(() => offset - 10)}>Anterior</Cta>
+                        <Cta disabled={!!error || loading} onClick={() => setOffset(() => offset + 10)}>Próximo</Cta>
+                    </Wrapper>
+                </Table>
+            </Wrapper>
+        </Container>
     )
 }
