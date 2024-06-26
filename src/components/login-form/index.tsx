@@ -9,7 +9,9 @@ import { validateEmail, validatePassword } from '../../utils/validators';
 
 export default function LoginForm() {
   const navigate = useNavigate()
-  if (checkLoginStatus()) navigate('/users', { replace: true })
+  if (checkLoginStatus()) navigate('/users', { replace: true }) 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const [validEmail, setValidEmail] = useState(false);
   const [validPassword, setValidPassword] = useState(false);
@@ -21,14 +23,15 @@ export default function LoginForm() {
   });
 
   onkeydown = (ev) => {
-    if (ev.key === 'Enter') validateInput();
+    if (ev.key === 'Enter') login();
   };
 
-  const validateInput = () => {
+  const validateInput = (): boolean => {
+
     // Make the user input validation removing any spaces in the start and end of the input.
-    if (validateEmail(userData.email)) setValidEmail(true);
+    if (validateEmail(email)) setValidEmail(true);
     else setValidEmail(false);
-    if (validatePassword(userData.password) && userData.password.trim().length >= 7) setValidPassword(true);
+    if (validatePassword(password) && password.trim().length >= 7) setValidPassword(true);
     else setValidPassword(false);
 
     !validEmail || !validPassword ? setShowValidationMessage(true) : setShowValidationMessage(false);
@@ -82,19 +85,20 @@ export default function LoginForm() {
                 autoComplete='current-password'
                 className='input-group__input'
               />
-              {showValidationMessage && userData.password.trim().length < 7 && (
-                <p className='input-group__informative-message'>A senha deve ter ao menos 7 caractéres.</p>
+              {showValidationMessage && password.trim().length < 7 && (
+                <p className='input-group__informative-message'>A senha deve ter ao menos 7 caracteres.</p>
               )}
               {showValidationMessage && !validPassword && (
-                <p className='input-group__informative-message'>A senha deve ser composta por caractéres alfánumericos.</p>
+                <p className='input-group__informative-message'>A senha deve ser composta por caracteres alfánumericos.</p>
               )}
             </label>
           </fieldset>
-          {error && !loading && <p className='info-block_error'>{error.message}</p>}
         </div>
 
         <button disabled={loading} aria-disabled={loading} type='submit' onClick={(ev) => { ev.preventDefault(); login() }} className='login-form__submit'>
           Entrar {loading && <div className="loading-spinner"></div>}
+        {loading && <p className='info-block__loading'>Carregando...</p>}
+        {error && <p className='info-block__error'>{error.message}</p>}
         </button>
       </form>
     </>
