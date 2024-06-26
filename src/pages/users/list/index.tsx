@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Heading } from "../../../components/common/heading";
 import styled from "styled-components";
 import { Table } from "../../../components/common/table";
-import { Wrapper } from "../../../components/common/wrapper";
+import { GridWrapper, Wrapper } from "../../../components/common/wrapper";
 import { Cta } from "../../../components/common/cta";
 import { Spinner } from "../../../components/common/spinner";
 
@@ -22,6 +22,17 @@ const Container = styled.main`
     width: 100%;
     max-width: 70cqw;
     margin: 0 auto;
+`;
+
+const CustomGridWrapper = styled(GridWrapper)`
+    cursor: pointer;
+    padding: 0;
+
+    & td {
+        &:last-child {
+            text-align: right;
+        }
+    }
 `;
 
 export default function UsersList() {
@@ -43,22 +54,23 @@ export default function UsersList() {
                             <th>Email</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <Wrapper $justify="start" $padding="0" as="tbody">
                         {data?.users.nodes.map((user: UserDto) => (
-                            <tr onClick={() => navigate(`/users/user/${user.id}`)} key={user.id}>
+                            <GridWrapper $padding="7px"  $columns="1fr 1fr" as="tr" onClick={() => navigate(`/users/user/${user.id}`)} key={user.id}>
                                 <td>{user.name}</td>
                                 <td>{user.email}</td>
-                            </tr>
+                            </GridWrapper>
                         ))}
                         {loading && (
-                            <tr>
+                            <GridWrapper $columns="1fr 1fr" as="tr">
                                 <Wrapper as="td" $align="center" $justify="center">
                                     <Spinner />
                                     Carregando...
                                 </Wrapper>
                                 <td></td>
-                            </tr>)}
-                    </tbody>
+                            </GridWrapper>
+                        )}
+                    </Wrapper>
                     <Wrapper>
                         <Cta disabled={offset <= 0} onClick={() => setOffset(() => offset - 10)}>Anterior</Cta>
                         <Cta disabled={!!error || loading} onClick={() => setOffset(() => offset + 10)}>Próximo</Cta>

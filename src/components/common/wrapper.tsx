@@ -27,5 +27,16 @@ export const GridWrapper = styled(Wrapper)`
 
     && {
         grid-template-columns: ${props => props.$columns || "1fr"};
+
+        & td {
+            width: 100%;
+            overflow: hidden;
+
+            &:nth-child(2){
+                overflow: scroll;
+                scrollbar-color: ${props => props.theme.colors.mediumEmerald} ${props => props.theme.colors.bgBolder || "#111827"};
+                scrollbar-width: thin;
+            }
+        }
     }
 `;
