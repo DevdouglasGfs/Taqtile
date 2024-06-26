@@ -1,11 +1,24 @@
 import { useState } from 'react';
-import './login-form.css';
 import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/mutations/login';
 import { checkLoginStatus, storeLoginToken } from '../../utils/auth';
 import { useNavigate } from 'react-router-dom';
 import { UserBasicLoginData } from '../../types/user';
 import { validateEmail, validatePassword } from '../../utils/validators';
+import { Heading } from '../common/heading';
+import { Wrapper } from '../common/wrapper';
+import { Label } from '../common/label';
+import { StatusBlock } from '../common/statusBlock';
+import { Cta } from '../common/cta';
+import { Spinner } from '../common/spinner';
+import styled from 'styled-components';
+import { StyledForm } from '../common/form';
+import { Input } from '../common/input';
+
+const CustomHeading = styled(Heading)`
+  font-size: 1.5rem;
+`;
+
 
 export default function LoginForm() {
   const navigate = useNavigate()
@@ -45,34 +58,36 @@ export default function LoginForm() {
   async function login() {
     validateInput() && mutateLogin({
       variables: { data: userData },
-      onCompleted: () => navigate('/users/list', { replace: true }),
+      onCompleted: () => navigate('/users', { replace: true }),
       onError: (error) => console.log(error)
-    }).then(({ data: { login: { token } } }) => storeLoginToken(token))
+    }).then(({ data: { login: { token } } }) => storeLoginToken(token)).catch(error => {
+      console.log(error)
+    })
   }
 
   return (
     <>
-      <form className='login-form'>
-        <h1 className='login-form__title'>Bem-vindo(a) à Taqtile!</h1>
-        <div className='login-form__user-input'>
+      <StyledForm>
+        <CustomHeading>Bem-vindo(a) à Taqtile!</CustomHeading>
+        <Wrapper $dir='column' $gap='2rem'>
           <fieldset>
-            <label htmlFor='email' className='input-group'>
+            <Label htmlFor='email'>
               Email
-              <input
+              <Input
                 id='email'
                 name='email'
                 required
                 value={userData.email}
                 onChange={handleInput}
                 type='email'
-                className='input-group__input'
+                placeholder='Digite seu email'
                 autoComplete='email'
               />
-              {showValidationMessage && !validEmail && <p className='input-group__informative-message'>Digite um email válido.</p>}
-            </label>
-            <label htmlFor='password' className='input-group'>
+              {showValidationMessage && !validEmail && <p>Digite um email válido.</p>}
+            </Label>
+            <Label htmlFor='password'>
               Senha
-              <input
+              <Input
                 id='password'
                 name='password'
                 required
@@ -80,23 +95,20 @@ export default function LoginForm() {
                 onChange={handleInput}
                 type='password'
                 autoComplete='current-password'
-                className='input-group__input'
               />
               {showValidationMessage && userData.password.trim().length < 7 && (
-                <p className='input-group__informative-message'>A senha deve ter ao menos 7 caractéres.</p>
+                <p>A senha deve ter ao menos 7 caractéres.</p>
               )}
-              {showValidationMessage && !validPassword && (
-                <p className='input-group__informative-message'>A senha deve ser composta por caractéres alfánumericos.</p>
-              )}
-            </label>
+              {!validatePassword(userData.password) && userData.password.trim() !== '' && <p>A senha deve ser composta por caractéres alfánumericos.</p>}
+            </Label>
           </fieldset>
-          {error && !loading && <p className='info-block_error'>{error.message}</p>}
-        </div>
+          {error && !loading && <StatusBlock $status='error'><p>{error.message}</p></StatusBlock>}
+        </Wrapper>
 
-        <button disabled={loading} aria-disabled={loading} type='submit' onClick={(ev) => { ev.preventDefault(); login() }} className='login-form__submit'>
-          Entrar {loading && <div className="loading-spinner"></div>}
-        </button>
-      </form>
+        <Cta $primary disabled={loading} aria-disabled={loading} type='submit' onClick={(ev) => { ev.preventDefault(); login() }}>
+          Entrar {loading && <Spinner />}
+        </Cta>
+      </StyledForm>
     </>
   );
 }
