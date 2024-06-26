@@ -3,6 +3,7 @@ import './login-form.css';
 import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/mutations/loginMutations';
 import { storeLoginToken } from '../../utils/auth';
+import { validateEmail, validatePassword } from '../../utils/validators';
 
 type UserDTO = {
   id: number,
@@ -29,12 +30,11 @@ export default function LoginForm() {
   };
 
   const validateInput = (): boolean => {
-    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    const passwordRegex = /^[a-zA-Z0-9]+$/;
 
-    if (emailRegex.test(email.trim())) setValidEmail(true);
+    // Make the user input validation removing any spaces in the start and end of the input.
+    if (validateEmail(email)) setValidEmail(true);
     else setValidEmail(false);
-    if (passwordRegex.test(password.trim()) && password.trim().length >= 7) setValidPassword(true);
+    if (validatePassword(password) && password.trim().length >= 7) setValidPassword(true);
     else setValidPassword(false);
 
     !validEmail || !validPassword ? setShowValidationMessage(true) : setShowValidationMessage(false);
@@ -93,10 +93,10 @@ export default function LoginForm() {
                 className='input-group__input'
               />
               {showValidationMessage && password.trim().length < 7 && (
-                <p className='input-group__informative-message'>A senha deve ter ao menos 7 caractéres.</p>
+                <p className='input-group__informative-message'>A senha deve ter ao menos 7 caracteres.</p>
               )}
               {showValidationMessage && !validPassword && (
-                <p className='input-group__informative-message'>A senha deve ser composta por caractéres alfánumericos.</p>
+                <p className='input-group__informative-message'>A senha deve ser composta por caracteres alfánumericos.</p>
               )}
             </label>
           </fieldset>
