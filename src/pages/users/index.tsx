@@ -10,7 +10,7 @@ export default function UsersList() {
 
     // Define the offset of the pagination
     const [offset, setOffset] = useState(0);
-    const { data, loading } = useGetUsers({ offset });
+    const { data, loading } = useGetUsers({ offset: offset, limit: 20 });
 
 
     return (
@@ -33,6 +33,7 @@ export default function UsersList() {
                     {loading && <tr><td>Carregando...</td></tr>}
                 </tbody>
                 <div className="pagination-controls">
+                    <span>Página {offset / 10 + 1}</span>
                     <button disabled={offset <= 0} onClick={() => setOffset(() => offset - 10)} className="pagination-controls__prev">Anterior</button>
                     <button onClick={() => setOffset(() => offset + 10)} className="pagination-controls__next">Próximo</button>
                 </div>
