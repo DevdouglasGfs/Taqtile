@@ -10,7 +10,7 @@ export default function UsersList() {
 
     // Define the offset of the pagination
     const [offset, setOffset] = useState(0);
-    const { data, loading } = useGetUsers({ offset: offset, limit: 20 });
+    const { data, loading } = useGetUsers({ offset, limit: 20 });
 
 
     return (
