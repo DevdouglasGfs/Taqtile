@@ -9,6 +9,9 @@ import { Wrapper } from "../../components/common/wrapper"
 import { Menu } from "../../components/common/menu"
 import { Link } from "../../components/common/link"
 import { useAuthentication } from "../../hooks/useAuth"
+import { Cta } from "../../components/common/cta"
+import { logout } from "../../utils/auth"
+import { useEffect } from "react"
 
 
 const NavigationLinks = () => {
@@ -38,7 +41,8 @@ export const theme = {
 
 export function UsersPage() {
     const navigate = useNavigate()
-    if (!useAuthentication().authenticated) navigate('/login', { replace: true })
+    const auth = useAuthentication();
+    if (!auth.authenticated) navigate('/login', { replace: true })
 
     return <>
         <ThemeProvider theme={theme}>
@@ -46,10 +50,13 @@ export function UsersPage() {
                 <Route path="/" element={<>
                     <main>
                         <Hero>
-                            <Heading>
-                                <span>Dashboard</span>
-                                Taqtile
-                            </Heading>
+                            <Wrapper $dir="column">
+                                <Heading>
+                                    <span>Dashboard</span>
+                                    Taqtile
+                                </Heading>
+                                <Cta $fill="half" onClick={() => { logout(), navigate('/login', { replace: true }) }}>Logout</Cta>
+                            </Wrapper>
                         </Hero>
                         <Outlet />
                     </main>
