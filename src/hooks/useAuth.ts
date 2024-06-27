@@ -11,7 +11,7 @@ export const useAuthentication = () => {
         if(token && isValidJwt(token)){
             setAuthentication({authenticated: true, token})
         } else {
-            setAuthentication({authenticated: false})
+            setAuthentication({authenticated: false, token: undefined})
         }
     }, [token])
 
