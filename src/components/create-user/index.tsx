@@ -4,6 +4,7 @@ import { dateIsNotAFutureDate, formatPhoneAndValidate, validateEmail, validatePa
 import { CREATE_USER } from "../../graphql/mutations/createUser";
 import { useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
+import { justNumbers } from "../../utils/formatters";
 
 
 export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
@@ -62,8 +63,8 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
         if (!userData || !validInputs) return
         else {
             await mutateUser({
-                variables: { data: userData },
-                onError: (error) => alert(JSON.stringify(`${error.name}: ${error.message}`)),
+                variables: { data: { ...userData, phone: justNumbers(userData.phone) } },
+                onError: (error) => console.error(`${error.name}: ${error.message}`),
                 onCompleted: () => navigate('/users/list')
             }).finally(() => onClose())
         }
