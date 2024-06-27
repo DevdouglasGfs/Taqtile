@@ -1,4 +1,4 @@
-import { Outlet, Route, Routes } from "react-router-dom"
+import { Outlet, Route, Routes, useNavigate } from "react-router-dom"
 import { UserManagement } from "./management"
 import UsersList from "./list"
 import { SpecificUserPage } from "./user"
@@ -8,6 +8,7 @@ import { Heading } from "../../components/common/heading"
 import { Wrapper } from "../../components/common/wrapper"
 import { Menu } from "../../components/common/menu"
 import { Link } from "../../components/common/link"
+import { useAuthentication } from "../../hooks/useAuth"
 
 
 const NavigationLinks = () => {
@@ -36,6 +37,9 @@ export const theme = {
 }
 
 export function UsersPage() {
+    const navigate = useNavigate()
+    if (!useAuthentication().authenticated) navigate('/login', { replace: true })
+
     return <>
         <ThemeProvider theme={theme}>
             <Routes>

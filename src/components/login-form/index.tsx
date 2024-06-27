@@ -14,6 +14,7 @@ import { Spinner } from '../common/spinner';
 import styled from 'styled-components';
 import { StyledForm } from '../common/form';
 import { Input } from '../common/input';
+import { useAuthentication } from '../../hooks/useAuth';
 
 const CustomHeading = styled(Heading)`
   font-size: 1.5rem;
@@ -21,8 +22,9 @@ const CustomHeading = styled(Heading)`
 
 
 export default function LoginForm() {
+
   const navigate = useNavigate()
-  if (checkLoginStatus()) navigate('/users', { replace: true })
+  if (useAuthentication().authenticated) navigate('/users', { replace: true })
 
   const [validEmail, setValidEmail] = useState(false);
   const [validPassword, setValidPassword] = useState(false);
