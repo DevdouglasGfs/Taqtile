@@ -37,7 +37,7 @@ export default function LoginForm() {
     return validEmail && validPassword
   };
 
-  const [mutateLogin, { error, loading }] = useMutation(LOGIN_MUTATION)
+  const [mutateLogin, { error, loading }] = useMutation<{ login: { token: string } }>(LOGIN_MUTATION)
 
   function handleInput({ target }: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = target;
@@ -47,9 +47,12 @@ export default function LoginForm() {
   async function login() {
     validateInput() && mutateLogin({
       variables: { data: userData },
-      onCompleted: () => navigate('/users/list', { replace: true }),
-      onError: (error) => console.log(error)
-    }).then(({ data: { login: { token } } }) => storeLoginToken(token)).catch(error => console.log(error))
+      onCompleted: ({ login: { token } }) => {
+        storeLoginToken(token);
+        navigate('/users/list', { replace: true })
+      },
+      onError: (error) => console.error(error)
+    })
   }
 
   return (
