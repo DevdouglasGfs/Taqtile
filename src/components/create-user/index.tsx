@@ -16,7 +16,7 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
     let currentDate = useRef(new Date());
     useMemo(() => { currentDate.current = new Date() }, [currentDate])
 
-    const validateAllInputs = () => {
+    const validateAllInputs = useCallback(() => {
         // Check if all inputs are filled
         setValidInputs(
             validateEmail(userData.email) && userData.name
@@ -28,8 +28,12 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
                 && userData.birthDate <= currentDate.current
                 ? true : false
         );
-    }
-    useMemo(validateAllInputs, [userData])
+    }, [userData, requiredAge]);
+
+    useEffect(() => {
+        const fieldsFilled = Object.values(userData).every(value => value !== '');
+        if (fieldsFilled) validateAllInputs();
+    }, [userData, validateAllInputs]);
 
     const dialog = useRef<HTMLDialogElement>(null);
 
@@ -39,8 +43,7 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
         setOpen(false);
     }, [setOpen]);
 
-    // eslint-disable-next-line
-    const onClickOutside = useEffect(() => {
+    useEffect(() => {
         document.addEventListener('mousedown', ({ target }) => {
             if (!dialog.current?.contains(target as Node)) onClose()
         })
