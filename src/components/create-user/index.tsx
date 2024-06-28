@@ -68,7 +68,8 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
             await mutateUser({
                 variables: { data: { ...userData, phone: justNumbers(userData.phone) } },
                 onError: (error) => console.error(`${error.name}: ${error.message}`),
-                onCompleted: () => { onClose(), navigate('/users/list') }
+                // @]typescript-eslint/no-unused-expressiions
+                onCompleted: () => { onClose(); navigate('/users/list') }
             })
         }
     }
