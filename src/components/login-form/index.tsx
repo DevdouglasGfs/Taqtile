@@ -41,17 +41,17 @@ export default function LoginForm() {
     return validEmail && validPassword ? true : false
   };
 
-  const [mutateLogin, { error, loading }] = useMutation(LOGIN_MUTATION)
+  const [mutateLogin, { error, loading }] = useMutation<{ login: { token: string } }>(LOGIN_MUTATION)
 
   async function login(_?: void) {
     validateInput() && mutateLogin({
-      variables: {
-        data: userData
-      }
-    }).then(data => {
-      storeLoginToken(data.data.login.token)
-      return data.data
-    }).catch(error => console.log(error))
+      variables: { data: userData },
+      onCompleted: ({ login: { token } }) => {
+        storeLoginToken(token);
+        return token
+      },
+      onError: (error) => console.error(error)
+    })
   }
 
   return (
