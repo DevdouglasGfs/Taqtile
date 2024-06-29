@@ -11,10 +11,6 @@ import { theme } from "..";
 import styled from "styled-components";
 import { Spinner } from "../../../components/common/spinner";
 
-export interface UserPage {
-    [id: string]: string
-}
-
 const CustomErrorHeading = styled(Heading)`
     color: #fff;
     font-size: 1.5rem;
