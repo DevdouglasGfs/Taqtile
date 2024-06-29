@@ -65,12 +65,12 @@ export const SpecificUserPage: React.FC = () => {
                             {data.user.name}
                         </CustomPresentHeading>
                         <Wrapper $padding="" $align="start">
-                            <StatusBlock $align="start" $rounded $status="info">
-                                <p><strong>Nome</strong>: {(data.user.name as string).substring(0, 1).toUpperCase() + (data.user.name as string).substring(1)}</p>
-                                <p><strong>Email</strong>: {data.user.email}</p>
-                                <p><strong>Data de Nascimento</strong>: {new Date(data.user.birthDate).toLocaleDateString(navigator.language)}</p>
-                                <p><strong>Telefone</strong>: {data.user.phone}</p>
-                                <p><strong>Cargo</strong>: {data.user.role}</p>
+                            <StatusBlock $align="start" $rounded $status="info" as="ul">
+                                <li><strong>Nome</strong>: {(data.user.name as string).substring(0, 1).toUpperCase() + (data.user.name as string).substring(1)}</li>
+                                <li><strong>Email</strong>: {data.user.email}</li>
+                                <li><strong>Data de Nascimento</strong>: {new Date(data.user.birthDate).toLocaleDateString(navigator.language)}</li>
+                                <li><strong>Telefone</strong>: {data.user.phone}</li>
+                                <li><strong>Cargo</strong>: {data.user.role}</li>
                             </StatusBlock>
                         </Wrapper>
                     </Hero>
