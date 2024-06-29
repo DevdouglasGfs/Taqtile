@@ -1,7 +1,8 @@
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
+import { FlexComportamentProps } from "../types";
 
-interface LinkProps {
+interface LinkProps extends FlexComportamentProps {
     $fill?: boolean;
     $appearAsButton?: boolean;
 }
@@ -16,7 +17,7 @@ export const Link = styled<typeof NavLink, LinkProps>(NavLink)`
     padding: ${props => props.$appearAsButton ? '12px 24px' : '8px 16px'};
     border-radius: ${props => props.$appearAsButton ? '8px' : ''};
     min-width: ${props => props.$appearAsButton ? 'fit-content' : ''};
-    flex: ${props => props.$fill ? '1 1 100%' : ''};
+    flex: ${props => props.$flex || props.$fill ? '1 1 100%' : ''};
     text-decoration: none;
     font-weight: 600;
     cursor: pointer;

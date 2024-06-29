@@ -1,5 +1,5 @@
 export interface FlexComportamentProps {
-    $flex?: boolean;
+    $flex?: string;
     $justify?: "start" | "end" | "center" | "space-between" | "space-around";
     $align?: "center" | "start" | "end";
     $gap?: string;
