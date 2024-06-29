@@ -9,6 +9,8 @@ import { Table } from "../../../components/common/table";
 import { GridWrapper, Wrapper } from "../../../components/common/wrapper";
 import { Cta } from "../../../components/common/cta";
 import { Spinner } from "../../../components/common/spinner";
+import { Menu } from "../../../components/common/menu";
+import { Link } from "../../../components/common/link";
 
 const CustomHeading = styled(Heading)`
     font-size: 1.5rem;
@@ -30,11 +32,21 @@ export default function UsersList() {
 
     // Define the offset of the pagination
     const [offset, setOffset] = useState(0);
-    const { data, loading, error } = useGetUsers({ offset });
+    const { data, loading, error } = useGetUsers({ offset, limit: 20 });
 
     return (
         <Container>
             <Wrapper $dir="column">
+                <Wrapper $dir="column" $maxWidth="80cqw" $gap="1rem">
+                    <Menu $gap=".5rem">
+                        <Heading as={"h2"}>Atalhos rápidos</Heading>
+                        <Wrapper as={"nav"} $wrap="wrap" $gap="12px">
+                            <Link $fill $appearAsButton to={'/'}>Início</Link>
+                            <Link $fill $appearAsButton to={'management'}>Controle de usuários</Link>
+                        </Wrapper>
+                    </Menu>
+                </Wrapper>
+
                 <CustomHeading as="h2">Lista de <span className='highlight'>Usuários</span></CustomHeading>
                 <Table>
                     <thead>
@@ -45,7 +57,7 @@ export default function UsersList() {
                     </thead>
                     <Wrapper $justify="start" $padding="0" as="tbody">
                         {data?.users.nodes.map((user: UserDto) => (
-                            <GridWrapper $padding="7px"  $columns="1fr 1fr" as="tr" onClick={() => navigate(`/users/user/${user.id}`)} key={user.id}>
+                            <GridWrapper $padding="7px" $columns="1fr 1fr" as="tr" onClick={() => navigate(`/users/user/${user.id}`)} key={user.id}>
                                 <td>{user.name}</td>
                                 <td>{user.email}</td>
                             </GridWrapper>
