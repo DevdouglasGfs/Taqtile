@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function UsersList() {
     const navigate = useNavigate();
-    if (!checkLoginStatus()) navigate('/login', { replace: true })
+    if (!checkLoginStatus()) { navigate('/login', { replace: true }) }
 
     // Define the offset of the pagination
     const [offset, setOffset] = useState(0);

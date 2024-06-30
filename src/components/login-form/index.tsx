@@ -9,7 +9,7 @@ import { validateEmail, validatePassword } from '../../utils/validators';
 
 export default function LoginForm() {
   const navigate = useNavigate()
-  if (checkLoginStatus()) navigate('/users', { replace: true })
+  if (checkLoginStatus()) { navigate('/users', { replace: true }) }
 
   const [validEmail, setValidEmail] = useState(false);
   const [validPassword, setValidPassword] = useState(false);
@@ -22,15 +22,18 @@ export default function LoginForm() {
   const { email, password } = userData;
 
   onkeydown = (ev) => {
-    if (ev.key === 'Enter') login();
+    if (ev.key === 'Enter') { login() };
   };
 
   const validateInput = (): boolean => {
-
     // Make the user input validation removing any spaces in the start and end of the input.
-    if (validateEmail(email)) setValidEmail(true);
-    else setValidEmail(false);
-    if (validatePassword(password) && password.trim().length >= 7) setValidPassword(true);
+
+    // Validate email
+    if (validateEmail(email)) { setValidEmail(true) }
+    else setValidEmail(false)
+
+    // Validate password
+    if (validatePassword(password) && password.trim().length >= 7) { setValidPassword(true) }
     else setValidPassword(false);
 
     !validEmail || !validPassword ? setShowValidationMessage(true) : setShowValidationMessage(false);
