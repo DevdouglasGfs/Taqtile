@@ -7,19 +7,8 @@ import { Hero } from "../../../components/common/hero";
 import { useGetUserById } from "../../../hooks/useGetUser";
 import { useParams } from "react-router-dom";
 import { StatusBlock } from "../../../components/common/statusBlock";
-import { theme } from "..";
-import styled from "styled-components";
 import { Spinner } from "../../../components/common/spinner";
-
-const CustomErrorHeading = styled(Heading)`
-    color: #fff;
-    font-size: 1.5rem;
-`;
-
-const CustomPresentHeading = styled(Heading)`
-    color: #fff;
-    font-size: 1.5rem;
-`;
+import theme from "../../../themes/default";
 
 export const SpecificUserPage: React.FC = () => {
     const { id } = useParams();
@@ -48,7 +37,7 @@ export const SpecificUserPage: React.FC = () => {
             {error && (
                 <Wrapper $maxWidth="80cqw">
                     <StatusBlock $justify="start" $dir="column" $status="error">
-                        <CustomErrorHeading as={"h2"}>Erro ao carregar</CustomErrorHeading>
+                        <Heading $size="1.5rem" as={"h2"}>Erro ao carregar</Heading>
                         <p>{error.message}</p>
                     </StatusBlock>
                 </Wrapper>
@@ -56,10 +45,10 @@ export const SpecificUserPage: React.FC = () => {
             {data && (
                 <Wrapper $maxWidth="80cqw">
                     <Hero $padding="" $bg={`linear-gradient(to bottom, ${theme.colors.link}, ${theme.colors.bgBold})`}>
-                        <CustomPresentHeading as={"h2"}>
+                        <Heading $size="1.5rem" as={"h2"}>
                             <span>Usuário</span>
                             {data.user.name}
-                        </CustomPresentHeading>
+                        </Heading>
                         <Wrapper $padding="" $align="start">
                             <StatusBlock $align="start" $rounded $status="info" as="ul">
                                 <li><strong>Nome</strong>: {(data.user.name as string).substring(0, 1).toUpperCase() + (data.user.name as string).substring(1)}</li>

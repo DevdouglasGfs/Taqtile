@@ -8,6 +8,7 @@ import { Heading } from "../../components/common/heading"
 import { Wrapper } from "../../components/common/wrapper"
 import { Menu } from "../../components/common/menu"
 import { Link } from "../../components/common/link"
+import theme from "../../themes/default"
 
 
 const NavigationLinks = () => {
@@ -22,17 +23,6 @@ const NavigationLinks = () => {
             </Menu>
         </Wrapper>
     </>
-}
-
-export const theme = {
-    colors: {
-        bgBolder: "#030712",
-        bgBold: "#111827",
-        softEmerald: "#D1FAE5",
-        mediumEmerald: "#34D398",
-        link: "#059669",
-        alert: "rgb(200,50,50)"
-    }
 }
 
 export function UsersPage() {

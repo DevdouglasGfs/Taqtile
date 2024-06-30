@@ -1,19 +1,37 @@
 import styled from "styled-components";
+import theme from "../../themes/default";
 
 interface InputProps {
-    type?: string;
+    $invalid?: boolean;
+    $size?: "small" | "medium" | "large"
 }
 
 export const Input = styled.input<InputProps>`
+    appearance: none;
     background: transparent;
-    border: none;
-    padding: 4px 8px;
-    border-radius: 4px;
+    border: ${props => {
+        if (props.$invalid) { return '1px solid ' + theme.colors.alert }
+        return ".2px solid rgba(255, 255, 255, .2)"
+    }};
+    padding: ${props => {
+        if (props.$size === "small") { return "4px 8px" }
+        else if (props.$size === "medium") { return "8px 16px" }
+        else if (props.$size === "large") { return "12px 24px" }
+        else return "8px 16px"
+    }};
+    border-radius: ${props => {
+        if (props.$size === "small") { return "4px" }
+        else if (props.$size === "medium") { return "8px" }
+        else if (props.$size === "large") { return "12px" }
+        else return "8px"
+    }};
     font-weight: normal;
     color: #fff;
     font-size: 1rem;
-    border: .2px solid rgba(255, 255, 255, .2);
-    accent-color: ${props => props.theme.colors.link};
+    accent-color: ${props => {
+        if (props.$invalid) { return theme.colors.alert };
+        return 'rgba(255, 255, 255, .2)'
+    }};
 
     &::placeholder {
         color: rgba(255, 255, 255, .5);
@@ -21,6 +39,6 @@ export const Input = styled.input<InputProps>`
 
     &:focus {
         outline: none;
-        border: .2px solid rgba(255, 255, 255, .5);
+        border: 1px solid rgba(255, 255, 255, .5);
     }
 `;
