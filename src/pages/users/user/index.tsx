@@ -29,7 +29,7 @@ export const SpecificUserPage: React.FC = () => {
             {loading && (
                 <Hero $bg="transparent">
                     <Wrapper $gap=".5rem" $justify="center" $align="center" $maxWidth="max(600px, 100%)">
-                        <Spinner size="2rem" />
+                        <Spinner $size="2rem" />
                         Carregando...
                     </Wrapper>
                 </Hero>

@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { FlexComportamentProps } from "../types";
+import theme from "../../themes/default";
 
 interface StatusBlockProps extends FlexComportamentProps {
     $status: "success" | "error" | "info";
@@ -17,10 +18,14 @@ export const StatusBlock = styled.div<StatusBlockProps>`
     padding: 1rem;
     border-radius: ${props => props.$rounded ? '8px' : '0'};
     color: #fff;
-    background-color: ${props => props.$status === 'success' ? props.theme.colors.mediumEsmerald : props.$status === "error" ? props.theme.colors.alert : (props.$bg || '')};
+    background-color: ${props => {
+        if (props.$status === 'success') { return props.theme.colors.mediumEmerald || theme.colors.mediumEmerald }
+        else if (props.$status === "error") { return props.theme.colors.alert || theme.colors.alert }
+        else return props.$bg || ''
+    }};
     font-weight: 600;
 
     & p {
-        margin: 0;
-    }
+    margin: 0;
+}
 `;

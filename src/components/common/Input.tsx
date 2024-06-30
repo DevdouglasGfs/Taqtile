@@ -10,7 +10,7 @@ export const Input = styled.input<InputProps>`
     appearance: none;
     background: transparent;
     border: ${props => {
-        if (props.$invalid) { return '1px solid ' + theme.colors.alert }
+        if (props.$invalid && props.theme.colors.alert) { return '1px solid ' + (props.theme.colors.alert || theme.colors.alert) }
         return ".2px solid rgba(255, 255, 255, .2)"
     }};
     padding: ${props => {
@@ -29,7 +29,7 @@ export const Input = styled.input<InputProps>`
     color: #fff;
     font-size: 1rem;
     accent-color: ${props => {
-        if (props.$invalid) { return theme.colors.alert };
+        if (props.$invalid) { return props.theme.colors.alert || theme.colors.alert }
         return 'rgba(255, 255, 255, .2)'
     }};
 

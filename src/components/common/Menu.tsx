@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { FlexComportamentProps } from "../types";
+import theme from "../../themes/default";
 
 interface MenuProps extends FlexComportamentProps {
     $display?: "inline-block" | "flex";
@@ -13,7 +14,7 @@ export const Menu = styled.div<MenuProps>`
     gap: ${props => props.$gap || "1rem"};
 
     & > h1, h2, h3, h4, h5, h6 {
-        color: ${props => props.theme.colors.softEmerald};
+        color: ${props => props.theme.colors.softEmerald || theme.colors.softEmerald};
         font-size: 1rem;
         margin: 0;
     }
