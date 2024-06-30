@@ -1,10 +1,10 @@
 import { useState } from "react";
 import CreateUser from "../../../components/create-user";
-import { Heading } from "../../../components/common/heading";
-import { Menu } from "../../../components/common/menu";
-import { Wrapper } from "../../../components/common/wrapper";
-import { Link } from "../../../components/common/link";
-import { Cta } from "../../../components/common/cta";
+import { Heading } from "../../../components/common/Heading";
+import { Menu } from "../../../components/common/Menu";
+import { Wrapper } from "../../../components/common/Wrapper";
+import { Link } from "../../../components/common/Link";
+import { Cta } from "../../../components/common/Cta";
 
 
 export function UserManagement() {

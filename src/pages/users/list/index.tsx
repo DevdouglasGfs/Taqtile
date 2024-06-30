@@ -3,14 +3,14 @@ import { UserDto } from '../../../types/user';
 import { useState } from 'react';
 import { checkLoginStatus } from '../../../utils/auth';
 import { useNavigate } from 'react-router-dom';
-import { Heading } from "../../../components/common/heading";
+import { Heading } from "../../../components/common/Heading";
 import styled from "styled-components";
-import { Table } from "../../../components/common/table";
-import { GridWrapper, Wrapper } from "../../../components/common/wrapper";
-import { Cta } from "../../../components/common/cta";
-import { Spinner } from "../../../components/common/spinner";
-import { Menu } from "../../../components/common/menu";
-import { Link } from "../../../components/common/link";
+import { Table } from "../../../components/common/Table";
+import { GridWrapper, Wrapper } from "../../../components/common/Wrapper";
+import { Cta } from "../../../components/common/Cta";
+import { Spinner } from "../../../components/common/Spinner";
+import { Menu } from "../../../components/common/Menu";
+import { Link } from "../../../components/common/Link";
 
 const CustomHeading = styled(Heading)`
     font-size: 1.5rem;

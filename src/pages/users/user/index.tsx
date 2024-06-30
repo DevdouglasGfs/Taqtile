@@ -1,13 +1,13 @@
 import React from "react";
-import { Wrapper } from "../../../components/common/wrapper";
-import { Menu } from "../../../components/common/menu";
-import { Heading } from "../../../components/common/heading";
-import { Link } from "../../../components/common/link";
-import { Hero } from "../../../components/common/hero";
+import { Wrapper } from "../../../components/common/Wrapper";
+import { Menu } from "../../../components/common/Menu";
+import { Heading } from "../../../components/common/Heading";
+import { Link } from "../../../components/common/Link";
+import { Hero } from "../../../components/common/Hero";
 import { useGetUserById } from "../../../hooks/useGetUser";
 import { useParams } from "react-router-dom";
-import { StatusBlock } from "../../../components/common/statusBlock";
-import { Spinner } from "../../../components/common/spinner";
+import { StatusBlock } from "../../../components/common/StatusBlock";
+import { Spinner } from "../../../components/common/Spinner";
 import theme from "../../../themes/default";
 
 export const SpecificUserPage: React.FC = () => {

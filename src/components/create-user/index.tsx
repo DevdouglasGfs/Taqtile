@@ -4,14 +4,14 @@ import { dateIsNotAFutureDate, formatPhoneAndValidate, validateEmail, validatePa
 import { CREATE_USER } from "../../graphql/mutations/createUser";
 import { useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
-import { Heading } from "../common/heading";
+import { Heading } from "../common/Heading";
 import styled from "styled-components";
-import { Modal } from "../common/modal";
-import { GridWrapper, Wrapper } from "../common/wrapper";
-import { Input } from "../common/input";
-import { Label } from "../common/label";
-import { Cta } from "../common/cta";
-import { StatusBlock } from "../common/statusBlock";
+import { Modal } from "../common/Modal";
+import { GridWrapper, Wrapper } from "../common/Wrapper";
+import { Input } from "../common/Input";
+import { Label } from "../common/Label";
+import { Cta } from "../common/Cta";
+import { StatusBlock } from "../common/StatusBlock";
 
 const ModalHeading = styled(Heading)`
     font-size: 1.5rem;
