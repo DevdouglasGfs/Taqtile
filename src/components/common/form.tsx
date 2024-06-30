@@ -28,14 +28,14 @@ export const Form = styled.form`
         flex-direction: column;
         gap: 1rem;
         min-width: 100%;
+    }
+    
+    & label, & input {
+        width: 100%;
+    }
 
-        & label, & input {
-            width: 100%;
-        }
-
-        & input {
-            padding: 1rem;
-            border-radius: 0.5rem;
-        }
+    & input {
+        padding: 1rem;
+        border-radius: 0.5rem;
     }
 `;
