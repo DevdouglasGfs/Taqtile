@@ -8,12 +8,5 @@ export interface FlexComportamentProps {
 }
 
 export type OverlapProps = {
-    isolate?: boolean;
-}
-
-export interface Distance {
-    left?: string;
-    right?: string;
-    top?: string;
-    bottom?: string;
+    $isolate?: boolean;
 }
