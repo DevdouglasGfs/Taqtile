@@ -1,8 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import LoginPage from "../pages/login";
-import { UsersPage } from "../pages/users";
-import { UserManagement } from "../pages/users/management";
+import UsersPage from "../pages/users";
+import UserManagement from "../pages/users/management";
 import UsersList from "../pages/users/list";
 import ErrorPage from "../pages/error-page";
 

@@ -2,7 +2,7 @@ import "./management.css";
 import { useState } from "react";
 import CreateUser from "../../../components/create-user";
 
-export function UserManagement() {
+export default function UserManagement() {
     const [showModal, setShowModal] = useState(false)
 
     return <>
