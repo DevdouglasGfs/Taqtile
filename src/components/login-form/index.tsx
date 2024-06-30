@@ -12,7 +12,7 @@ import { StatusBlock } from '../common/statusBlock';
 import { Cta } from '../common/cta';
 import { Spinner } from '../common/spinner';
 import styled from 'styled-components';
-import { StyledForm } from '../common/form';
+import { Form } from '../common/form';
 import { Input } from '../common/input';
 
 const CustomHeading = styled(Heading)`
@@ -67,7 +67,7 @@ export default function LoginForm() {
 
   return (
     <>
-      <StyledForm>
+      <Form>
         <CustomHeading>Bem-vindo(a) à Taqtile!</CustomHeading>
         <Wrapper $dir='column' $gap='2rem'>
           <fieldset>
@@ -108,7 +108,7 @@ export default function LoginForm() {
         <Cta $primary disabled={loading} aria-disabled={loading} type='submit' onClick={(ev) => { ev.preventDefault(); login() }}>
           Entrar {loading && <Spinner />}
         </Cta>
-      </StyledForm>
+      </Form>
     </>
   );
 }
