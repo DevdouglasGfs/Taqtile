@@ -11,18 +11,12 @@ import { Label } from '../common/label';
 import { StatusBlock } from '../common/statusBlock';
 import { Cta } from '../common/cta';
 import { Spinner } from '../common/spinner';
-import styled from 'styled-components';
 import { Form } from '../common/form';
 import { Input } from '../common/input';
 
-const CustomHeading = styled(Heading)`
-  font-size: 1.5rem;
-`;
-
-
 export default function LoginForm() {
   const navigate = useNavigate()
-  if (checkLoginStatus()) navigate('/users', { replace: true })
+  if (checkLoginStatus()) { navigate('/users', { replace: true }) }
 
   const [validEmail, setValidEmail] = useState(false);
   const [validPassword, setValidPassword] = useState(false);
@@ -39,9 +33,10 @@ export default function LoginForm() {
 
   const validateInput = () => {
     // Make the user input validation removing any spaces in the start and end of the input.
-    if (validateEmail(userData.email)) setValidEmail(true);
-    else setValidEmail(false);
-    if (validatePassword(userData.password) && userData.password.trim().length >= 7) setValidPassword(true);
+    if (validateEmail(userData.email)) { setValidEmail(true) }
+    else setValidEmail(false)
+
+    if (validatePassword(userData.password) && userData.password.trim().length >= 7) { setValidPassword(true) }
     else setValidPassword(false);
 
     !validEmail || !validPassword ? setShowValidationMessage(true) : setShowValidationMessage(false);
@@ -68,13 +63,16 @@ export default function LoginForm() {
   return (
     <>
       <Form>
-        <CustomHeading>Bem-vindo(a) à Taqtile!</CustomHeading>
+        <Heading $size='1.5rem'>Bem-vindo(a) à Taqtile!</Heading>
         <Wrapper $dir='column' $gap='2rem'>
           <fieldset>
             <Label htmlFor='email'>
               Email
               <Input
                 id='email'
+                $invalid={showValidationMessage && !validEmail}
+                aria-invalid={showValidationMessage && !validEmail}
+                aria-required
                 name='email'
                 required
                 value={userData.email}
@@ -89,6 +87,9 @@ export default function LoginForm() {
               Senha
               <Input
                 id='password'
+                $invalid={showValidationMessage && !validatePassword(userData.password)}
+                aria-invalid={showValidationMessage && !validatePassword(userData.password)}
+                aria-required
                 name='password'
                 required
                 value={userData.password}
