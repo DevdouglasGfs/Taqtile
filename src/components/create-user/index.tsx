@@ -19,20 +19,25 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
     const validateAllInputs = useCallback(() => {
         // Check if all inputs are filled
         setValidInputs(
-            validateEmail(userData.email) && userData.name
-                && formatPhoneAndValidate(userData.phone)
-                && dateIsNotAFutureDate(userData.birthDate)
-                && validatePassword(userData.password)
-                && userData.password.trim().length >= 7
-                && userData.birthDate <= new Date(currentDate.current.getFullYear() - requiredAge, currentDate.current.getMonth(), currentDate.current.getDate())
-                && userData.birthDate <= currentDate.current
+            validateEmail(userData.email)
+                && userData.name
+                && formatPhoneAndValidate(userData.phone) // Format phone and validate
+                && dateIsNotAFutureDate(userData.birthDate) // Check if birthDate is not a future date
+                && validatePassword(userData.password) // Check if password is valid
+                && userData.password.trim().length >= 7 // Check if password has at least 7 caracters
+                && userData.birthDate <= new Date(
+                    currentDate.current.getFullYear() - requiredAge,
+                    currentDate.current.getMonth(),
+                    currentDate.current.getDate()
+                ) // Check if birthDate is before the required age
+                && userData.birthDate <= currentDate.current // Check if birthDate is before the present date
                 ? true : false
         );
     }, [userData, requiredAge]);
 
     useEffect(() => {
         const fieldsFilled = Object.values(userData).every(value => value !== '');
-        if (fieldsFilled) validateAllInputs();
+        if (fieldsFilled) { validateAllInputs() }
     }, [userData, validateAllInputs]);
 
     const dialog = useRef<HTMLDialogElement>(null);
@@ -45,15 +50,19 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
 
     useEffect(() => {
         document.addEventListener('mousedown', ({ target }) => {
-            if (!dialog.current?.contains(target as Node)) onClose()
+            if (!dialog.current?.contains(target as Node)) { onClose() }
         })
     })
 
-    function userHasMinimuAge() {
-        // The provide birthDate should be before of the present date
-        return requiredAge && requiredAge > 0 && userData.birthDate < currentDate.current
+    function userHasMinimumAge() {
+        return requiredAge && requiredAge > 0 // Check if requiredAge is valid
+            && userData.birthDate < currentDate.current // Check if birthDate is before the present date
             // The provide birthDate should be before of the same date in (requiredAge) 
-            && userData.birthDate > new Date(currentDate.current.getFullYear() - requiredAge, currentDate.current.getMonth(), currentDate.current.getDate())
+            && userData.birthDate > new Date(
+                currentDate.current.getFullYear() - requiredAge,
+                currentDate.current.getMonth(),
+                currentDate.current.getDate()
+            )
     }
 
     function handleInput(ev: React.ChangeEvent<HTMLInputElement>) {
@@ -63,12 +72,11 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
     const [mutateUser, { loading, error }] = useMutation(CREATE_USER)
 
     const create = async () => {
-        if (!userData || !validInputs) return
+        if (!userData || !validInputs) { return }
         else {
             await mutateUser({
                 variables: { data: { ...userData, phone: justNumbers(userData.phone) } },
                 onError: (error) => console.error(`${error.name}: ${error.message}`),
-                // @]typescript-eslint/no-unused-expressiions
                 onCompleted: () => { onClose(); navigate('/users/list') }
             })
         }
@@ -110,7 +118,7 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
                                     )}
 
                                     {/* The provide birthDate should be before of the present date */}
-                                    {(userHasMinimuAge() && (
+                                    {(userHasMinimumAge() && (
                                         <p className="input-group__informative-message">O usuário precisa ter ao menos {requiredAge} anos.</p>
                                     )) || ''}
                                 </label>
