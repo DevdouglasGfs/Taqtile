@@ -1,5 +1,3 @@
-import { Navigate } from "react-router"
-
 export const checkLoginStatus = () => {
     return localStorage.getItem('access-token')
 }
@@ -10,5 +8,4 @@ export const storeLoginToken = (token: string) => {
 
 export const logout = () => {
     localStorage.removeItem('access-token')
-    Navigate({to: '/login'})
 }
