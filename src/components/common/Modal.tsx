@@ -35,7 +35,7 @@ export const Modal = styled.div<ModalProps>`
     transform: translate(-50%, -50%);
     width: calc(100% - 2rem);
     max-width: 70cqw;
-    height: min(calc(100% - 2rem), auto);
+    height: min(calc(100% - 2rem), 90dvh);
     background: ${props => {
         if (props.$bg) { return props.$bg };
         return `linear-gradient(to bottom, ${theme.colors.bgBolder}, ${theme.colors.bgBold})`
