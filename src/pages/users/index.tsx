@@ -1,9 +1,9 @@
 import { Outlet, Route, Routes } from 'react-router-dom';
 import './list/users-list.css';
-import { UserManagement } from './management';
+import UserManagement from './management';
 import UsersList from './list';
 
-export function UsersPage() {
+export default function UsersPage() {
   return (
     <>
       <Routes>
