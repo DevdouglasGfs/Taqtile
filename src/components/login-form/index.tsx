@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/mutations/login';
-import { checkLoginStatus, storeLoginToken } from '../../utils/auth';
+import { storeLoginToken } from '../../utils/auth';
 import { useNavigate } from 'react-router-dom';
 import { UserBasicLoginData } from '../../types/user';
 import { validateEmail, validatePassword } from '../../utils/validators';

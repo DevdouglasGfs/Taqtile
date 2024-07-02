@@ -11,7 +11,6 @@ import { Link } from "../../components/common/link"
 import { useAuthentication } from "../../hooks/useAuth"
 import { Cta } from "../../components/common/cta"
 import { logout } from "../../utils/auth"
-import { useEffect } from "react"
 
 
 const NavigationLinks = () => {
@@ -41,8 +40,7 @@ export const theme = {
 
 export function UsersPage() {
     const navigate = useNavigate()
-    const auth = useAuthentication();
-    if (!auth.authenticated) navigate('/login', { replace: true })
+    if (!useAuthentication().authenticated) { navigate('/login', { replace: true }) }
 
     return <>
         <ThemeProvider theme={theme}>
@@ -55,7 +53,7 @@ export function UsersPage() {
                                     <span>Dashboard</span>
                                     Taqtile
                                 </Heading>
-                                <Cta $fill="half" onClick={() => { logout(), navigate('/login', { replace: true }) }}>Logout</Cta>
+                                <Cta $fill="half" onClick={() => { logout(); navigate('/login', { replace: true }) }}>Logout</Cta>
                             </Wrapper>
                         </Hero>
                         <Outlet />
