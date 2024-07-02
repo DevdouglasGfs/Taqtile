@@ -4,14 +4,13 @@ import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/mutations/login';
 import { getLoginToken, storeLoginToken } from '../../utils/auth';
 import { useNavigate } from 'react-router-dom';
-import { UserBasicLoginData } from '../../types/user';
 import { Field as LoginField } from '../field';
 
 export default function LoginForm() {
   const navigate = useNavigate();
   if (getLoginToken()) navigate('/users', { replace: true });
 
-  const [userData, setUserData] = useState<UserBasicLoginData>({
+  const [userData, setUserData] = useState<{ email: string; password: string }>({
     email: '',
     password: '',
   });

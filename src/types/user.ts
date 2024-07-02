@@ -10,9 +10,3 @@ export interface UserDto {
   role: 'user' | 'admin';
   password?: string;
 }
-
-/**
- * Type which is used to validate the login data.
- * Used in the Login page.
- */
-export type UserBasicLoginData = Required<Pick<UserDto, 'email' | 'password'>>;
