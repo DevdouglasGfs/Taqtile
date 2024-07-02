@@ -24,17 +24,6 @@ const Container = styled.main`
     margin: 0 auto;
 `;
 
-const CustomGridWrapper = styled(GridWrapper)`
-    cursor: pointer;
-    padding: 0;
-
-    & td {
-        &:last-child {
-            text-align: right;
-        }
-    }
-`;
-
 export default function UsersList() {
     const navigate = useNavigate();
     if (!checkLoginStatus()) navigate('/login', { replace: true })
