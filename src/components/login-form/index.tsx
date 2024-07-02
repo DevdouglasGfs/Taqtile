@@ -8,8 +8,8 @@ import { UserBasicLoginData } from '../../types/user';
 import { validateEmail, validatePassword } from '../../utils/validators';
 
 export default function LoginForm() {
-  const navigate = useNavigate()
-  if (getLoginToken()) navigate('/users', { replace: true })
+  const navigate = useNavigate();
+  if (getLoginToken()) navigate('/users', { replace: true });
 
   const [validEmail, setValidEmail] = useState(false);
   const [validPassword, setValidPassword] = useState(false);
@@ -17,7 +17,7 @@ export default function LoginForm() {
 
   const [userData, setUserData] = useState<UserBasicLoginData>({
     email: '',
-    password: ''
+    password: '',
   });
   const { email, password } = userData;
 
@@ -26,7 +26,6 @@ export default function LoginForm() {
   };
 
   const validateInput = (): boolean => {
-
     // Make the user input validation removing any spaces in the start and end of the input.
     if (validateEmail(email)) setValidEmail(true);
     else setValidEmail(false);
@@ -34,25 +33,26 @@ export default function LoginForm() {
     else setValidPassword(false);
 
     !validEmail || !validPassword ? setShowValidationMessage(true) : setShowValidationMessage(false);
-    return validEmail && validPassword
+    return validEmail && validPassword;
   };
 
-  const [mutateLogin, { error, loading }] = useMutation<{ login: { token: string } }>(LOGIN_MUTATION)
+  const [mutateLogin, { error, loading }] = useMutation<{ login: { token: string } }>(LOGIN_MUTATION);
 
   function handleInput({ target }: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = target;
-    setUserData({ ...userData, [name]: value })
+    setUserData({ ...userData, [name]: value });
   }
 
   async function login() {
-    validateInput() && mutateLogin({
-      variables: { data: userData },
-      onCompleted: ({ login: { token } }) => {
-        storeLoginToken(token);
-        navigate('/users/list', { replace: true })
-      },
-      onError: (error) => console.error(error)
-    })
+    validateInput() &&
+      mutateLogin({
+        variables: { data: userData },
+        onCompleted: ({ login: { token } }) => {
+          storeLoginToken(token);
+          navigate('/users/list', { replace: true });
+        },
+        onError: (error) => console.error(error),
+      });
   }
 
   return (
@@ -99,8 +99,17 @@ export default function LoginForm() {
 
         {loading && <p className='info-block__loading'>Carregando...</p>}
         {error && <p className='info-block__error'>{error.message}</p>}
-        <button disabled={loading} aria-disabled={loading} type='submit' onClick={(ev) => { ev.preventDefault(); login() }} className='login-form__submit'>
-          Entrar {loading && <div className="loading-spinner"></div>}
+        <button
+          disabled={loading}
+          aria-disabled={loading}
+          type='submit'
+          onClick={(ev) => {
+            ev.preventDefault();
+            login();
+          }}
+          className='login-form__submit'
+        >
+          Entrar {loading && <div className='loading-spinner'></div>}
         </button>
       </form>
     </>

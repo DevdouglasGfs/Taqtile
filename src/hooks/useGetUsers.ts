@@ -1,5 +1,5 @@
-import { gql, useQuery } from "@apollo/client";
-import { PageInput } from "../types/pagination";
+import { gql, useQuery } from '@apollo/client';
+import { PageInput } from '../types/pagination';
 
 const FETCH_USERS = gql(`
     query GetUsers($data: PageInput) {
@@ -11,11 +11,11 @@ const FETCH_USERS = gql(`
             }
         }
     }
-`)
+`);
 
 export const useGetUsers = (data?: PageInput) => {
-    return useQuery(FETCH_USERS, {
-        variables: { data },
-        onError: (error) => console.error(error)
-    })
-}
+  return useQuery(FETCH_USERS, {
+    variables: { data },
+    onError: (error) => console.error(error),
+  });
+};
