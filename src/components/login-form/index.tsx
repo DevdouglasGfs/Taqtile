@@ -6,13 +6,13 @@ import { storeLoginToken } from '../../utils/auth';
 import { validateEmail, validatePassword } from '../../utils/validators';
 
 type UserDTO = {
-  id: number,
-  name: string,
-  phone: string,
-  birthDate: Date,
-  email: string,
-  role: string
-}
+  id: number;
+  name: string;
+  phone: string;
+  birthDate: Date;
+  email: string;
+  role: string;
+};
 export type UserBasicPersonalData = Required<Pick<UserDTO, 'email'> & { password: string }>;
 
 export default function LoginForm() {
@@ -30,7 +30,6 @@ export default function LoginForm() {
   };
 
   const validateInput = (): boolean => {
-
     // Make the user input validation removing any spaces in the start and end of the input.
     if (validateEmail(email)) setValidEmail(true);
     else setValidEmail(false);
@@ -38,20 +37,21 @@ export default function LoginForm() {
     else setValidPassword(false);
 
     !validEmail || !validPassword ? setShowValidationMessage(true) : setShowValidationMessage(false);
-    return validEmail && validPassword ? true : false
+    return validEmail && validPassword ? true : false;
   };
 
-  const [mutateLogin, { error, loading }] = useMutation<{ login: { token: string } }>(LOGIN_MUTATION)
+  const [mutateLogin, { error, loading }] = useMutation<{ login: { token: string } }>(LOGIN_MUTATION);
 
   async function login(_?: void) {
-    validateInput() && mutateLogin({
-      variables: { data: userData },
-      onCompleted: ({ login: { token } }) => {
-        storeLoginToken(token);
-        return token
-      },
-      onError: (error) => console.error(error)
-    })
+    validateInput() &&
+      mutateLogin({
+        variables: { data: userData },
+        onCompleted: ({ login: { token } }) => {
+          storeLoginToken(token);
+          return token;
+        },
+        onError: (error) => console.error(error),
+      });
   }
 
   return (
