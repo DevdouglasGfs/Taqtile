@@ -1,5 +1,4 @@
 import { createBrowserRouter } from 'react-router-dom';
-import App from '../App';
 import LoginPage from '../pages/login';
 import { UsersPage } from '../pages/users';
 import { UserManagement } from '../pages/users/management';
@@ -9,7 +8,7 @@ import ErrorPage from '../pages/error-page';
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: <p>Nothing here until now. Access the /login page to login or /users to see the list of users</p>,
     errorElement: <ErrorPage />,
   },
   {
