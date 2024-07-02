@@ -5,16 +5,6 @@ import { LOGIN_MUTATION } from '../../graphql/mutations/loginMutations';
 import { storeLoginToken } from '../../utils/auth';
 import { validateEmail, validatePassword } from '../../utils/validators';
 
-type UserDTO = {
-  id: number;
-  name: string;
-  phone: string;
-  birthDate: Date;
-  email: string;
-  role: string;
-};
-export type UserBasicPersonalData = Required<Pick<UserDTO, 'email'> & { password: string }>;
-
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,7 +13,7 @@ export default function LoginForm() {
   const [validPassword, setValidPassword] = useState(false);
   const [showValidationMessage, setShowValidationMessage] = useState(false);
 
-  const userData = { email, password } as UserBasicPersonalData;
+  const userData = { email, password } as { email: string; password: string };
 
   onkeydown = (ev) => {
     if (ev.key === 'Enter') login();
@@ -33,6 +23,7 @@ export default function LoginForm() {
     // Make the user input validation removing any spaces in the start and end of the input.
     if (validateEmail(email)) setValidEmail(true);
     else setValidEmail(false);
+    
     if (validatePassword(password) && password.trim().length >= 7) setValidPassword(true);
     else setValidPassword(false);
 
@@ -42,7 +33,7 @@ export default function LoginForm() {
 
   const [mutateLogin, { error, loading }] = useMutation<{ login: { token: string } }>(LOGIN_MUTATION);
 
-  async function login(_?: void) {
+  async function login() {
     validateInput() &&
       mutateLogin({
         variables: { data: userData },
@@ -99,7 +90,14 @@ export default function LoginForm() {
 
         {loading && <p className='info-block__loading'>Carregando...</p>}
         {error && <p className='info-block__error'>{error.message}</p>}
-        <button type='submit' onClick={(event) => login(event.preventDefault())} className='login-form__submit'>
+        <button
+          type='submit'
+          onClick={(ev) => {
+            ev.preventDefault();
+            login();
+          }}
+          className='login-form__submit'
+        >
           Entrar
         </button>
       </form>
