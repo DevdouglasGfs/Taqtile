@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import './login-form.css';
 import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/mutations/loginMutations';
@@ -94,8 +94,8 @@ export default function LoginForm() {
         {error && <p className='info-block__error'>{error.message}</p>}
         <button
           type='submit'
-          onClick={(ev) => {
-            ev.preventDefault();
+          onClick={(event) => {
+            event.preventDefault();
             login();
           }}
           className='login-form__submit'
