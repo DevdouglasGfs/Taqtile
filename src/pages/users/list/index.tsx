@@ -2,12 +2,12 @@ import './users-list.css';
 import { useGetUsers } from "../../../hooks/useGetUsers";
 import { UserDto } from '../../../types/user';
 import { useState } from 'react';
-import { checkLoginStatus } from '../../../utils/auth';
+import { getLoginToken } from '../../../utils/auth';
 import { useNavigate } from 'react-router-dom';
 
 export default function UsersList() {
     const navigate = useNavigate();
-    if (!checkLoginStatus()) navigate('/login', { replace: true })
+    if (!getLoginToken()) navigate('/login', { replace: true })
 
     // Define the offset of the pagination
     const [offset, setOffset] = useState(0);

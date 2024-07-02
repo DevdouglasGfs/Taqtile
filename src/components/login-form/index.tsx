@@ -2,14 +2,14 @@ import { useState } from 'react';
 import './login-form.css';
 import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/mutations/login';
-import { checkLoginStatus, storeLoginToken } from '../../utils/auth';
+import { getLoginToken, storeLoginToken } from '../../utils/auth';
 import { useNavigate } from 'react-router-dom';
 import { UserBasicLoginData } from '../../types/user';
 import { validateEmail, validatePassword } from '../../utils/validators';
 
 export default function LoginForm() {
   const navigate = useNavigate()
-  if (checkLoginStatus()) navigate('/users', { replace: true })
+  if (getLoginToken()) navigate('/users', { replace: true })
 
   const [validEmail, setValidEmail] = useState(false);
   const [validPassword, setValidPassword] = useState(false);
