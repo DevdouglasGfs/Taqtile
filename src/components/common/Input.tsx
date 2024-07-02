@@ -3,11 +3,11 @@ import theme from "../../themes/default";
 
 interface InputProps {
     $invalid?: boolean;
-    $size?: "small" | "medium" | "large"
+    $size?: "small" | "medium" | "large";
+    $fill?: boolean;
 }
 
 export const Input = styled.input<InputProps>`
-    appearance: none;
     background: transparent;
     border: ${props => {
         if (props.$invalid && props.theme.colors.alert) { return '1px solid ' + (props.theme.colors.alert || theme.colors.alert) }
@@ -30,8 +30,10 @@ export const Input = styled.input<InputProps>`
     font-size: 1rem;
     accent-color: ${props => {
         if (props.$invalid) { return props.theme.colors.alert || theme.colors.alert }
-        return 'rgba(255, 255, 255, .2)'
+        // else statement required because $invalid is not defined/applicable to input[type="radio"] and anothers inputs.
+        else 'rgba(255, 255, 255, .2)' 
     }};
+    width: ${(props) => props.$fill ? '100%' : 'auto'};
 
     &::placeholder {
         color: rgba(255, 255, 255, .5);
@@ -39,6 +41,6 @@ export const Input = styled.input<InputProps>`
 
     &:focus {
         outline: none;
-        border: 1px solid rgba(255, 255, 255, .5);
+        border: .2px solid rgba(255, 255, 255, .5);
     }
 `;

@@ -115,7 +115,7 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
                                     {!validatePassword(userData.password) && userData.password.trim() !== '' && <p>A senha deve ser composta por caractéres alfánumericos.</p>}
                                 </Label>
                                 <Label htmlFor="birth-date">Data de Nascimento
-                                    <Input required onChange={({ target: { value } }) => setUserData({ ...userData, birthDate: new Date(value) })}
+                                    <Input $fill required onChange={({ target: { value } }) => setUserData({ ...userData, birthDate: new Date(value) })}
                                         value={
                                             (userData.birthDate.toISOString().split('T')[0])
                                             || new Date().toISOString().split('T')[0]}
