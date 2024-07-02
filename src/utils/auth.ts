@@ -1,4 +1,4 @@
-export const checkLoginStatus = () => {
+export const getLoginToken = () => {
     return localStorage.getItem('access-token')
 }
 
