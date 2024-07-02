@@ -41,22 +41,17 @@ export default function LoginForm() {
     return validEmail && validPassword ? true : false
   };
 
-  const [mutateLogin, { data: dataFetched, error, loading }] = useMutation(LOGIN_MUTATION)
+  const [mutateLogin, { error, loading }] = useMutation(LOGIN_MUTATION)
 
   async function login(_?: void) {
-    try {
-      validateInput() && mutateLogin({
-        variables: {
-          data: userData
-        }
-      }).then(data => {
-        storeLoginToken(data.data.login.token)
-        return data.data
-      }).catch(error => console.log(error))
-
-    } catch (error) {
-      console.log(error)
-    }
+    validateInput() && mutateLogin({
+      variables: {
+        data: userData
+      }
+    }).then(data => {
+      storeLoginToken(data.data.login.token)
+      return data.data
+    }).catch(error => console.log(error))
   }
 
   return (
