@@ -20,8 +20,8 @@ export const StatusBlock = styled.div<StatusBlockProps>`
     color: #fff;
     background-color: ${props => {
         if (props.$status === 'success') { return props.theme.colors.mediumEmerald || theme.colors.mediumEmerald }
-        else if (props.$status === "error") { return props.theme.colors.alert || theme.colors.alert }
-        else return props.$bg || ''
+        if (props.$status === "error") { return props.theme.colors.alert || theme.colors.alert }
+        return props.$bg || ''
     }};
     font-weight: 600;
 

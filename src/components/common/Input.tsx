@@ -15,15 +15,15 @@ export const Input = styled.input<InputProps>`
     }};
     padding: ${props => {
         if (props.$size === "small") { return "4px 8px" }
-        else if (props.$size === "medium") { return "8px 16px" }
-        else if (props.$size === "large") { return "12px 24px" }
-        else return "8px 16px"
+        if (props.$size === "medium") { return "8px 16px" }
+        if (props.$size === "large") { return "12px 24px" }
+        return "8px 16px"
     }};
     border-radius: ${props => {
         if (props.$size === "small") { return "4px" }
-        else if (props.$size === "medium") { return "8px" }
-        else if (props.$size === "large") { return "12px" }
-        else return "8px"
+        if (props.$size === "medium") { return "8px" }
+        if (props.$size === "large") { return "12px" }
+        return "8px"
     }};
     font-weight: normal;
     color: #fff;
