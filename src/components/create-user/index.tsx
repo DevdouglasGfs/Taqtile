@@ -52,12 +52,18 @@ export default function CreateUser({ open, setOpen }: { open: boolean, setOpen: 
         setOpen(false);
     }, [setOpen]);
 
-    // eslint-disable-next-line
-    const onClickOutside = useEffect(() => {
+    useEffect(() => {
+        const modalRef = modal; 
         document.addEventListener('mousedown', ({ target }) => {
-            if (!modal.current?.contains(target as Node)) onClose()
+            if (!modalRef.current?.contains(target as Node)) onClose()
         })
-    })
+
+        return () => {
+            document.removeEventListener('mousedown', ({ target }) => {
+                if (!modalRef.current?.contains(target as Node)) onClose()
+            })
+        }
+    }, [onClose])
 
     function userHasMinimuAge() {
         // The provide birthDate should be before of the present date
