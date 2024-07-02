@@ -13,14 +13,13 @@ export default function LoginForm() {
   const [validPassword, setValidPassword] = useState(false);
   const [showValidationMessage, setShowValidationMessage] = useState(false);
 
-  const userData = { email, password } as {email: string, password: string};
+  const userData = { email, password } as { email: string; password: string };
 
   onkeydown = (ev) => {
     if (ev.key === 'Enter') login();
   };
 
   const validateInput = (): boolean => {
-
     // Make the user input validation removing any spaces in the start and end of the input.
     if (validateEmail(email)) setValidEmail(true);
     else setValidEmail(false);
@@ -28,10 +27,10 @@ export default function LoginForm() {
     else setValidPassword(false);
 
     !validEmail || !validPassword ? setShowValidationMessage(true) : setShowValidationMessage(false);
-    return validEmail && validPassword ? true : false
+    return validEmail && validPassword ? true : false;
   };
 
-  const [mutateLogin, { error, loading }] = useMutation(LOGIN_MUTATION)
+  const [mutateLogin, { error, loading }] = useMutation(LOGIN_MUTATION);
 
   async function login(_?: void) {
     /**
@@ -40,17 +39,19 @@ export default function LoginForm() {
      * will be redirected to another page without the need to login again.
      */
     try {
-      validateInput() && mutateLogin({
-        variables: {
-          data: userData
-        }
-      }).then(data => {
-        storeLoginToken(data.data.login.token) 
-        return data.data
-      }).catch(error => console.log(error))
-
+      validateInput() &&
+        mutateLogin({
+          variables: {
+            data: userData,
+          },
+        })
+          .then((data) => {
+            storeLoginToken(data.data.login.token);
+            return data.data;
+          })
+          .catch((error) => console.log(error));
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
