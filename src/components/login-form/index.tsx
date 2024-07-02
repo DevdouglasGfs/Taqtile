@@ -16,7 +16,7 @@ export default function LoginForm() {
   const userData = { email, password } as { email: string; password: string };
 
   onkeydown = (ev) => {
-    if (ev.key === 'Enter') login();
+    if (ev.key === 'Enter') { login() };
   };
 
   const validateInput = (): boolean => {
@@ -30,29 +30,18 @@ export default function LoginForm() {
     return validEmail && validPassword ? true : false;
   };
 
-  const [mutateLogin, { error, loading }] = useMutation(LOGIN_MUTATION);
+  const [mutateLogin, { error, loading }] = useMutation<{ login: { token: string } }>(LOGIN_MUTATION);
 
-  async function login(_?: void) {
-    /**
-     * Try to login with the user data and clear the local storage
-     * if the user has a token because the user with a valid token
-     * will be redirected to another page without the need to login again.
-     */
-    try {
-      validateInput() &&
-        mutateLogin({
-          variables: {
-            data: userData,
-          },
-        })
-          .then((data) => {
-            storeLoginToken(data.data.login.token);
-            return data.data;
-          })
-          .catch((error) => console.log(error));
-    } catch (error) {
-      console.log(error);
-    }
+  async function login() {
+    validateInput() &&
+      mutateLogin({
+        variables: { data: userData },
+        onCompleted: ({ login: { token } }) => {
+          storeLoginToken(token);
+          return token;
+        },
+        onError: (error) => console.error(error),
+      });
   }
 
   return (
@@ -100,7 +89,7 @@ export default function LoginForm() {
 
         {loading && <p className='info-block__loading'>Carregando...</p>}
         {error && <p className='info-block__error'>{error.message}</p>}
-        <button type='submit' onClick={(event) => login(event.preventDefault())} className='login-form__submit'>
+        <button type='submit' onClick={(event) => { event.preventDefault(); login() }} className='login-form__submit'>
           Entrar
         </button>
       </form>
