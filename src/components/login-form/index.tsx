@@ -3,10 +3,7 @@ import './login-form.css';
 import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/mutations/loginMutations';
 import { storeLoginToken } from '../../utils/auth';
-import { UserDto } from '../../types/user';
 import { validateEmail, validatePassword } from '../../utils/validators';
-
-export type UserBasicLoginData = Required<Pick<UserDto, 'email'> & { password: string }>;
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
@@ -16,7 +13,7 @@ export default function LoginForm() {
   const [validPassword, setValidPassword] = useState(false);
   const [showValidationMessage, setShowValidationMessage] = useState(false);
 
-  const userData = { email, password } as UserBasicLoginData;
+  const userData = { email, password } as {email: string, password: string};
 
   onkeydown = (ev) => {
     if (ev.key === 'Enter') login();
