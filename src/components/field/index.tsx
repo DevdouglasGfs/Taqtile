@@ -1,5 +1,7 @@
 import { ChangeEvent, InputHTMLAttributes, useCallback, useEffect, useState } from 'react';
 import { validateEmail, validatePassword } from '../../utils/validators';
+import { Label } from '../common/Label';
+import { Input } from '../common/Input';
 
 export const Field: React.FC<{
   type: InputHTMLAttributes<HTMLInputElement>['type'];
@@ -24,9 +26,9 @@ export const Field: React.FC<{
   }, [value, validateInput]);
 
   return (
-    <label htmlFor='email' className='input-group'>
+    <Label htmlFor='email' className='input-group'>
       {type === 'email' ? 'Email' : 'Senha'}
-      <input
+      <Input
         type={type}
         id={type === 'email' ? 'email' : 'password'}
         name={type === 'email' ? 'email' : 'password'}
@@ -35,9 +37,12 @@ export const Field: React.FC<{
         value={value}
         onChange={update}
         className='input-group__input'
-      />
+        $invalid={showValidationMessage}
+        aria-invalid={showValidationMessage}
+        aria-required
+        />
       {type === 'email' && showValidationMessage && !validInput && (
-        <p className='input-group__informative-message'>Digite um email válido.</p>
+          <p className='input-group__informative-message'>Digite um email válido.</p>
       )}
       {type === 'password' && showValidationMessage && value.length < 7 && (
         <p className='input-group__informative-message'>A senha deve ter ao menos 7 caracteres.</p>
@@ -45,6 +50,6 @@ export const Field: React.FC<{
       {type === 'password' && showValidationMessage && !validInput && (
         <p className='input-group__informative-message'>A senha deve ser composta por caracteres alfánumericos.</p>
       )}
-    </label>
+    </Label>
   );
 };
