@@ -1,12 +1,17 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { UserDto } from '../../types/user';
-import { dateIsNotAFutureDate, formatPhoneAndValidate, validateEmail, validatePassword, validatePhone } from '../../utils/validators';
+import {
+  birthDateIsValid,
+  dateIsNotAFutureDate,
+  formatPhoneAndValidate,
+  validateEmail,
+  validatePassword,
+  validatePhone,
+} from '../../utils/validators';
 import { CREATE_USER } from '../../graphql/mutations/createUser';
 import { useMutation } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
-import { justNumbers } from '../../utils/formatters';
 import { Heading } from '../common/Heading';
-import styled from 'styled-components';
 import { Modal } from '../common/Modal';
 import { GridWrapper, Wrapper } from '../common/Wrapper';
 import { Input } from '../common/Input';
@@ -18,7 +23,7 @@ export default function CreateUser({ open, setOpen }: { open: boolean; setOpen: 
   const navigate = useNavigate();
   const [validInputs, setValidInputs] = useState(false);
   let currentDate = useRef(new Date());
-  const dialog = useRef<HTMLDialogElement>(null);
+  const modal = useRef<HTMLDivElement>(null);
   const [userData, setUserData] = useState<Required<Omit<UserDto, 'id'>>>({
     name: '',
     email: '',
@@ -29,58 +34,77 @@ export default function CreateUser({ open, setOpen }: { open: boolean; setOpen: 
   });
   const requiredAge = 10;
 
-  useMemo(() => {
-    currentDate.current = new Date();
-  }, [currentDate]);
-
   const validateAllInputs = useCallback(() => {
-    // Check if all inputs are filled
     setValidInputs(
       validateEmail(userData.email) &&
-        userData.name &&
+        userData.name !== '' &&
         formatPhoneAndValidate(userData.phone) &&
         dateIsNotAFutureDate(userData.birthDate) &&
         validatePassword(userData.password) &&
-        userData.password.trim().length >= 7 &&
-        userData.birthDate <=
-          new Date(currentDate.current.getFullYear() - requiredAge, currentDate.current.getMonth(), currentDate.current.getDate()) &&
-        userData.birthDate <= currentDate.current
-        ? true
-        : false,
+        birthDateIsValid(userData.birthDate, requiredAge),
     );
   }, [userData, requiredAge]);
-
-  useEffect(() => {
-    const fieldsFilled = Object.values(userData).every((value) => value !== '');
-    if (fieldsFilled) validateAllInputs();
-  }, [userData, validateAllInputs]);
 
   const onClose = useCallback(() => {
     setUserData({ name: '', email: '', phone: '', role: 'user', birthDate: new Date(), password: '' });
     setOpen(false);
   }, [setOpen]);
 
+  function handleInput(ev: React.ChangeEvent<HTMLInputElement>) {
+    setUserData({ ...userData, [ev.target.name]: ev.target.value });
+  }
+
+  function userHasMinimumAge() {
+    return (
+      requiredAge &&
+      requiredAge > 0 &&
+      userData.birthDate < currentDate.current &&
+      userData.birthDate >
+        new Date(currentDate.current.getFullYear() - requiredAge, currentDate.current.getMonth(), currentDate.current.getDate())
+    );
+  }
+
   useEffect(() => {
+    const fieldsFilled = Object.values(userData).every((value) => value !== '');
+    if (fieldsFilled) validateAllInputs();
+  }, [userData, validateAllInputs]);
+
+  useEffect(() => {
+    const modalRef = modal.current;
     document.addEventListener('mousedown', ({ target }) => {
-      if (!dialog.current?.contains(target as Node)) onClose();
+      if (!modal.current?.contains(target as Node)) onClose();
     });
 
     return () => {
       document.removeEventListener('mousedown', ({ target }) => {
-        if (!dialog.current?.contains(target as Node)) onClose();
+        if (!modalRef?.contains(target as Node)) onClose();
       });
     };
   });
+
+  const [mutateUser, { loading, error }] = useMutation(CREATE_USER);
+  const create = async () => {
+    if (!userData || !validInputs) return;
+    else {
+      await mutateUser({
+        variables: { data: userData },
+        onError: (error) => console.error(`${error.name}: ${error.message}. ErrorObject: ${JSON.stringify(error)}`),
+        onCompleted: () => navigate('/users'),
+      }).finally(() => onClose());
+    }
+  };
 
   return (
     <>
       <Modal ref={modal} open={open}>
         <form method='post'>
-          <ModalHeading as='h2'>Criar Usuário</ModalHeading>
+          <Heading $size='1.5rem' as='h2'>
+            Criar Usuário
+          </Heading>
           <Wrapper $padding='0' $dir='column' $align='start' $gap='2rem'>
             <fieldset>
               <Heading as='h3'>Dados Pessoais</Heading>
-              <CustomGridWrapper $align='start'>
+              <GridWrapper $align='start' $padding='0' $gap='1rem'>
                 <Label htmlFor='name'>
                   Nome
                   <Input
@@ -154,9 +178,9 @@ export default function CreateUser({ open, setOpen }: { open: boolean; setOpen: 
                   />
                   {!dateIsNotAFutureDate(userData.birthDate) && <p>A data não pode ser no futuro.</p>}
                   {/* The provide birthDate should be before of the present date */}
-                  {(userHasMinimuAge() && <p>O usuário precisa ter ao menos {requiredAge} anos.</p>) || ''}
+                  {(userHasMinimumAge() && <p>O usuário precisa ter ao menos {requiredAge} anos.</p>) || ''}
                 </Label>
-              </CustomGridWrapper>
+              </GridWrapper>
             </fieldset>
             <fieldset>
               <Heading as='h3'>Nível de Permissões</Heading>
