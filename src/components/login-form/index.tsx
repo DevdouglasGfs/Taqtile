@@ -1,10 +1,16 @@
 import { useState } from 'react';
-import './login-form.css';
 import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/mutations/login';
 import { getLoginToken, storeLoginToken } from '../../utils/auth';
 import { useNavigate } from 'react-router-dom';
 import { Field as LoginField } from '../field';
+import { Heading } from '../common/Heading';
+import { Wrapper } from '../common/Wrapper';
+import { StatusBlock } from '../common/StatusBlock';
+import { Cta } from '../common/Cta';
+import { Spinner } from '../common/Spinner';
+import { Form } from '../common/Form';
+import { validateEmail, validatePassword } from '../../utils/validators';
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -22,20 +28,20 @@ export default function LoginForm() {
     }
   };
 
-  const [mutateLogin, { error, loading }] = useMutation<{ login: { token: string } }>(LOGIN_MUTATION);
+  const [mutateLogin, { error, loading }] = useMutation(LOGIN_MUTATION);
 
   function handleInput({ target }: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = target;
-    setUserData({ ...userData, [name]: value.trim() });
+    setUserData({ ...userData, [name]: value });
   }
 
   async function login() {
-    if ((email && password).length < 1) return;
+    if(!validateEmail(email) && !validatePassword(password) && !(password.length >= 7)) return;
     mutateLogin({
       variables: { data: userData },
       onCompleted: ({ login: { token } }) => {
         storeLoginToken(token);
-        navigate('/users/list', { replace: true });
+        navigate('/users', { replace: true });
       },
       onError: (error) => console.error(error),
     });
@@ -43,30 +49,22 @@ export default function LoginForm() {
 
   return (
     <>
-      <form className='login-form'>
-        <h1 className='login-form__title'>Bem-vindo(a) à Taqtile!</h1>
-        <div className='login-form__user-input'>
+      <Form>
+        <Heading $size='1.5rem'>Bem-vindo(a) à Taqtile!</Heading>
+        <Wrapper $dir='column' $gap='2rem'>
           <fieldset>
             <LoginField type='email' update={handleInput} value={email} />
             <LoginField type='password' update={handleInput} value={password} />
+            <LoginField type='email' update={handleInput} value={email} />
+            <LoginField type='password' update={handleInput} value={password} />
           </fieldset>
-        </div>
+          {error && !loading && <StatusBlock $status='error'><p>{error.message}</p></StatusBlock>}
+        </Wrapper>
 
-        {loading && <p className='info-block__loading'>Carregando...</p>}
-        {error && <p className='info-block__error'>{error.message}</p>}
-        <button
-          disabled={loading}
-          aria-disabled={loading}
-          type='submit'
-          onClick={(ev) => {
-            ev.preventDefault();
-            login();
-          }}
-          className='login-form__submit'
-        >
-          Entrar {loading && <div className='loading-spinner'></div>}
-        </button>
-      </form>
+        <Cta $primary disabled={loading} aria-disabled={loading} type='submit' onClick={(ev) => { ev.preventDefault(); login() }}>
+          Entrar {loading && <Spinner />}
+        </Cta>
+      </Form>
     </>
   );
 }

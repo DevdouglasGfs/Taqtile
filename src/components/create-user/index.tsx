@@ -1,16 +1,29 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { UserDto } from '../../types/user';
-import { dateIsNotAFutureDate, formatPhoneAndValidate, validateEmail, validatePassword, validatePhone } from '../../utils/validators';
+import {
+  birthDateIsValid,
+  dateIsNotAFutureDate,
+  formatPhoneAndValidate,
+  validateEmail,
+  validatePassword,
+  validatePhone,
+} from '../../utils/validators';
 import { CREATE_USER } from '../../graphql/mutations/createUser';
 import { useMutation } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
-import { justNumbers } from '../../utils/formatters';
+import { Heading } from '../common/Heading';
+import { Modal } from '../common/Modal';
+import { GridWrapper, Wrapper } from '../common/Wrapper';
+import { Input } from '../common/Input';
+import { Label } from '../common/Label';
+import { Cta } from '../common/Cta';
+import { StatusBlock } from '../common/StatusBlock';
 
 export default function CreateUser({ open, setOpen }: { open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
   const navigate = useNavigate();
   const [validInputs, setValidInputs] = useState(false);
   let currentDate = useRef(new Date());
-  const dialog = useRef<HTMLDialogElement>(null);
+  const modal = useRef<HTMLDivElement>(null);
   const [userData, setUserData] = useState<Required<Omit<UserDto, 'id'>>>({
     name: '',
     email: '',
@@ -21,94 +34,80 @@ export default function CreateUser({ open, setOpen }: { open: boolean; setOpen: 
   });
   const requiredAge = 10;
 
-  useMemo(() => {
-    currentDate.current = new Date();
-  }, [currentDate]);
-
   const validateAllInputs = useCallback(() => {
-    // Check if all inputs are filled
     setValidInputs(
       validateEmail(userData.email) &&
-        userData.name &&
+        userData.name !== '' &&
         formatPhoneAndValidate(userData.phone) &&
         dateIsNotAFutureDate(userData.birthDate) &&
         validatePassword(userData.password) &&
-        userData.password.trim().length >= 7 &&
-        userData.birthDate <=
-          new Date(currentDate.current.getFullYear() - requiredAge, currentDate.current.getMonth(), currentDate.current.getDate()) &&
-        userData.birthDate <= currentDate.current
-        ? true
-        : false,
+        birthDateIsValid(userData.birthDate, requiredAge),
     );
   }, [userData, requiredAge]);
+
+  const onClose = useCallback(() => {
+    setUserData({ name: '', email: '', phone: '', role: 'user', birthDate: new Date(), password: '' });
+    setOpen(false);
+  }, [setOpen]);
+
+  function handleInput(ev: React.ChangeEvent<HTMLInputElement>) {
+    setUserData({ ...userData, [ev.target.name]: ev.target.value });
+  }
+
+  function userHasMinimumAge() {
+    return (
+      requiredAge &&
+      requiredAge > 0 &&
+      userData.birthDate < currentDate.current &&
+      userData.birthDate >
+        new Date(currentDate.current.getFullYear() - requiredAge, currentDate.current.getMonth(), currentDate.current.getDate())
+    );
+  }
 
   useEffect(() => {
     const fieldsFilled = Object.values(userData).every((value) => value !== '');
     if (fieldsFilled) validateAllInputs();
   }, [userData, validateAllInputs]);
 
-  const onClose = useCallback(() => {
-    setUserData({ name: '', email: '', phone: '', role: 'user', birthDate: new Date(), password: '' });
-    dialog.current?.close();
-    setOpen(false);
-  }, [setOpen]);
-
   useEffect(() => {
+    const modalRef = modal.current;
     document.addEventListener('mousedown', ({ target }) => {
-      if (!dialog.current?.contains(target as Node)) onClose();
+      if (!modal.current?.contains(target as Node)) onClose();
     });
 
     return () => {
       document.removeEventListener('mousedown', ({ target }) => {
-        if (!dialog.current?.contains(target as Node)) onClose();
+        if (!modalRef?.contains(target as Node)) onClose();
       });
     };
   });
 
-  function userHasMinimumAge() {
-    // The provide birthDate should be before of the present date
-    return (
-      requiredAge &&
-      requiredAge > 0 &&
-      userData.birthDate < currentDate.current &&
-      // The provide birthDate should be before of the same date in (requiredAge)
-      userData.birthDate >
-        new Date(currentDate.current.getFullYear() - requiredAge, currentDate.current.getMonth(), currentDate.current.getDate())
-    );
-  }
-
-  function handleInput(ev: React.ChangeEvent<HTMLInputElement>) {
-    setUserData({ ...userData, [ev.target.name]: ev.target.value });
-  }
-
   const [mutateUser, { loading, error }] = useMutation(CREATE_USER);
-
   const create = async () => {
     if (!userData || !validInputs) return;
     else {
       await mutateUser({
-        variables: { data: { ...userData, phone: justNumbers(userData.phone) } },
-        onError: (error) => console.error(`${error.name}: ${error.message}`),
-        onCompleted: () => {
-          onClose();
-          navigate('/users/list');
-        },
-      });
+        variables: { data: userData },
+        onError: (error) => console.error(`${error.name}: ${error.message}. ErrorObject: ${JSON.stringify(error)}`),
+        onCompleted: () => navigate('/users'),
+      }).finally(() => onClose());
     }
   };
 
   return (
     <>
-      <dialog ref={dialog} open={open} className='create-user'>
-        <form method='post' className='create-user__form'>
-          <h2 className='create-user__title'>Criar Usuário</h2>
-          <div className='create-user__data-group'>
+      <Modal ref={modal} open={open}>
+        <form method='post'>
+          <Heading $size='1.5rem' as='h2'>
+            Criar Usuário
+          </Heading>
+          <Wrapper $padding='0' $dir='column' $align='start' $gap='2rem'>
             <fieldset>
-              <h3 className='create-user__title'>Dados Pessoais</h3>
-              <div className='create-user__label-group'>
-                <label className='input-group' htmlFor='name'>
+              <Heading as='h3'>Dados Pessoais</Heading>
+              <GridWrapper $align='start' $padding='0' $gap='1rem'>
+                <Label htmlFor='name'>
                   Nome
-                  <input
+                  <Input
                     required
                     onChange={handleInput}
                     placeholder='Nome Completo'
@@ -116,13 +115,12 @@ export default function CreateUser({ open, setOpen }: { open: boolean; setOpen: 
                     name='name'
                     id='name'
                     type='text'
-                    className='create-user__input'
                     autoComplete='name'
                   />
-                </label>
-                <label className='create-user__input-group' htmlFor='email'>
+                </Label>
+                <Label htmlFor='email'>
                   Email
-                  <input
+                  <Input
                     required
                     onChange={handleInput}
                     placeholder='seuemail@email.com'
@@ -130,16 +128,13 @@ export default function CreateUser({ open, setOpen }: { open: boolean; setOpen: 
                     name='email'
                     id='email'
                     type='email'
-                    className='create-user__input'
                     autoComplete='email'
                   />
-                  {!validateEmail(userData.email) && userData.email.trim() !== '' && (
-                    <p className='input-group__informative-message'>Formato de email inválido.</p>
-                  )}
-                </label>
-                <label className='create-user__input-group' htmlFor='phone'>
+                  {!validateEmail(userData.email) && userData.email.trim() !== '' && <p>Formato de email inválido.</p>}
+                </Label>
+                <Label htmlFor='phone'>
                   Celular
-                  <input
+                  <Input
                     required
                     onChange={handleInput}
                     placeholder='(99) 99999-9999'
@@ -147,16 +142,15 @@ export default function CreateUser({ open, setOpen }: { open: boolean; setOpen: 
                     name='phone'
                     id='phone'
                     type='text'
-                    className='create-user__input'
                     autoComplete='tel'
                   />
                   {!validatePhone(userData.phone) && userData.phone.trim() !== '' && (
-                    <p className='input-group__informative-message'>Formato de número de telefone inválido ou não suportado.</p>
+                    <p>Formato de número de telefone inválido ou não suportado.</p>
                   )}
-                </label>
-                <label className='create-user__input-group' htmlFor='password'>
+                </Label>
+                <Label htmlFor='password'>
                   Senha
-                  <input
+                  <Input
                     required
                     onChange={handleInput}
                     placeholder='Senha'
@@ -164,83 +158,70 @@ export default function CreateUser({ open, setOpen }: { open: boolean; setOpen: 
                     name='password'
                     id='password'
                     type='password'
-                    className='create-user__input'
                     autoComplete='new-password'
                   />
-                  {userData.password.trim().length < 7 && userData.password.trim() !== '' && (
-                    <p className='input-group__informative-message'>A senha deve ter ao menos 7 caractéres.</p>
-                  )}
+                  {userData.password.trim().length < 7 && userData.password.trim() !== '' && <p>A senha deve ter ao menos 7 caractéres.</p>}
                   {!validatePassword(userData.password) && userData.password.trim() !== '' && (
-                    <p className='input-group__informative-message'>A senha deve ser composta por caractéres alfánumericos.</p>
+                    <p>A senha deve ser composta por caractéres alfánumericos.</p>
                   )}
-                </label>
-                <label className='create-user__input-group' htmlFor='birth-date'>
+                </Label>
+                <Label htmlFor='birth-date'>
                   Data de Nascimento
-                  <input
+                  <Input
+                    $fill
                     required
                     onChange={({ target: { value } }) => setUserData({ ...userData, birthDate: new Date(value) })}
                     value={userData.birthDate.toISOString().split('T')[0] || new Date().toISOString().split('T')[0]}
                     name='birthDate'
                     id='birth-date'
                     type='date'
-                    className='create-user__input'
                   />
-                  {!dateIsNotAFutureDate(userData.birthDate) && (
-                    <p className='input-group__informative-message'>A data não pode ser no futuro.</p>
-                  )}
+                  {!dateIsNotAFutureDate(userData.birthDate) && <p>A data não pode ser no futuro.</p>}
                   {/* The provide birthDate should be before of the present date */}
-                  {(userHasMinimumAge() && (
-                    <p className='input-group__informative-message'>O usuário precisa ter ao menos {requiredAge} anos.</p>
-                  )) ||
-                    ''}
-                </label>
-              </div>
+                  {(userHasMinimumAge() && <p>O usuário precisa ter ao menos {requiredAge} anos.</p>) || ''}
+                </Label>
+              </GridWrapper>
             </fieldset>
-            <fieldset className='create-user__input-group_inline'>
-              <h3 className='create-user__title'>Nível de Permissões</h3>
-              <label htmlFor='user-role'>
-                <input
-                  onChange={handleInput}
-                  value={'user'}
-                  name='role'
-                  id='user-role'
-                  type='radio'
-                  className='create-user__input'
-                  defaultChecked
-                />
+            <fieldset>
+              <Heading as='h3'>Nível de Permissões</Heading>
+              <Label $dir='row' htmlFor='user-role'>
+                <Input onChange={handleInput} value={'user'} name='role' id='user-role' type='radio' defaultChecked />
                 <span>Usuário</span>
-              </label>
-              <label htmlFor='admin-role'>
-                <input onChange={handleInput} value={'admin'} name='role' id='admin-role' type='radio' className='create-user__input' />
+              </Label>
+              <Label $dir='row' htmlFor='admin-role'>
+                <Input onChange={handleInput} value={'admin'} name='role' id='admin-role' type='radio' />
                 <span>Administrador</span>
-              </label>
+              </Label>
             </fieldset>
-          </div>
-          {error && !loading && <p className='info-block_error'>{error.message}</p>}
-          <div className='create-user__action-group'>
-            <button
+          </Wrapper>
+          {error && !loading && (
+            <StatusBlock $status='error'>
+              <p>{error.message}</p>
+            </StatusBlock>
+          )}
+          <Wrapper>
+            <Cta
               type='button'
               onClick={() => {
                 onClose();
               }}
-              className='create-user__cancel-cta'
             >
               Cancelar
-            </button>
-            <button
+            </Cta>
+            <Cta
               disabled={loading || (validInputs ? false : true)}
               type='submit'
               onClick={(ev) => {
                 ev.preventDefault();
                 create();
               }}
-              className='create-user__add-cta'
             >
               Adicionar
-            </button>
-          </div>
+            </Cta>
+          </Wrapper>
         </form>
-      </dialog>
+      </Modal>
     </>
   );
 }
+
