@@ -31,7 +31,7 @@ export const Input = styled.input<InputProps>`
     accent-color: ${props => {
         if (props.$invalid) { return props.theme.colors.alert || theme.colors.alert }
         // else statement required because $invalid is not defined/applicable to input[type="radio"] and anothers inputs.
-        else return 'rgba(255, 255, 255, .2)';
+        else return theme.colors.link;
     }};
     width: ${(props) => props.$fill ? '100%' : 'auto'};
 
