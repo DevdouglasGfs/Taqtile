@@ -1,10 +1,10 @@
 import { useState } from 'react';
+import './login-form.css';
 import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/mutations/login';
-import { checkLoginStatus, storeLoginToken } from '../../utils/auth';
+import { getLoginToken, storeLoginToken } from '../../utils/auth';
 import { useNavigate } from 'react-router-dom';
-import { UserBasicLoginData } from '../../types/user';
-import { validateEmail, validatePassword } from '../../utils/validators';
+import { Field as LoginField } from '../field';
 import { Heading } from '../common/Heading';
 import { Wrapper } from '../common/Wrapper';
 import { Label } from '../common/Label';
@@ -15,50 +15,42 @@ import { Form } from '../common/Form';
 import { Input } from '../common/Input';
 
 export default function LoginForm() {
-  const navigate = useNavigate()
-  if (checkLoginStatus()) { navigate('/users', { replace: true }) }
+  const navigate = useNavigate();
+  if (getLoginToken()) navigate('/users', { replace: true });
 
   const [validEmail, setValidEmail] = useState(false);
   const [validPassword, setValidPassword] = useState(false);
   const [showValidationMessage, setShowValidationMessage] = useState(false);
 
-  const [userData, setUserData] = useState<UserBasicLoginData>({
+  const [userData, setUserData] = useState<{ email: string; password: string }>({
     email: '',
-    password: ''
+    password: '',
   });
+  const { email, password } = userData;
 
   onkeydown = (ev) => {
-    if (ev.key === 'Enter') validateInput();
+    if (ev.key === 'Enter') {
+      login();
+    }
   };
 
-  const validateInput = () => {
-    // Make the user input validation removing any spaces in the start and end of the input.
-    if (validateEmail(userData.email)) { setValidEmail(true) }
-    else setValidEmail(false)
-
-    if (validatePassword(userData.password) && userData.password.trim().length >= 7) { setValidPassword(true) }
-    else setValidPassword(false);
-
-    !validEmail || !validPassword ? setShowValidationMessage(true) : setShowValidationMessage(false);
-    return validEmail && validPassword
-  };
-
-  const [mutateLogin, { error, loading }] = useMutation(LOGIN_MUTATION)
+  const [mutateLogin, { error, loading }] = useMutation(LOGIN_MUTATION);
 
   function handleInput({ target }: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = target;
-    setUserData({ ...userData, [name]: value })
+    setUserData({ ...userData, [name]: value });
   }
 
   async function login() {
-    validateInput() && mutateLogin({
+    if ((email && password).length < 1) return;
+    mutateLogin({
       variables: { data: userData },
-      onCompleted: () => navigate('/users', { replace: true }),
-      onError: (error) => console.log(error)
-    }).then(({ data: { login: { token } } }) => storeLoginToken(token)).catch(error => {
-      console.log(error)
-    })
-  }
+      onCompleted: ({ login: { token } }) => {
+        storeLoginToken(token);
+        navigate('/users/list', { replace: true });
+      },
+      onError: (error) => console.error(error),
+    });
 
   return (
     <>
@@ -102,6 +94,8 @@ export default function LoginForm() {
               )}
               {!validatePassword(userData.password) && userData.password.trim() !== '' && <p>A senha deve ser composta por caractéres alfánumericos.</p>}
             </Label>
+            <LoginField type='email' update={handleInput} value={email} />
+            <LoginField type='password' update={handleInput} value={password} />          
           </fieldset>
           {error && !loading && <StatusBlock $status='error'><p>{error.message}</p></StatusBlock>}
         </Wrapper>

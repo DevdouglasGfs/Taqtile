@@ -1,7 +1,7 @@
 import { Outlet, Route, Routes } from 'react-router-dom';
-import { UserManagement } from './management';
+import UserManagement from './management';
 import UsersList from './list';
-import { SpecificUserPage } from './user';
+import SpecificUserPage from './user';
 import { ThemeProvider } from 'styled-components';
 import { Heading } from '../../components/common/Heading';
 import { Wrapper } from '../../components/common/Wrapper';
@@ -30,7 +30,7 @@ const NavigationLinks = () => {
   );
 };
 
-export function UsersPage() {
+export default function UsersPage() {
   return (
     <>
       <ThemeProvider theme={theme}>
