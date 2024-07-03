@@ -17,7 +17,9 @@ export default function LoginForm() {
   const { email, password } = userData;
 
   onkeydown = (ev) => {
-    if (ev.key === 'Enter') login();
+    if (ev.key === 'Enter') {
+      login();
+    }
   };
 
   const [mutateLogin, { error, loading }] = useMutation<{ login: { token: string } }>(LOGIN_MUTATION);
@@ -28,7 +30,7 @@ export default function LoginForm() {
   }
 
   async function login() {
-    if ((email && password).length < 0) return;
+    if ((email && password).length < 1) return;
     mutateLogin({
       variables: { data: userData },
       onCompleted: ({ login: { token } }) => {
