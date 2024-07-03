@@ -8,6 +8,9 @@ import { justNumbers } from '../../utils/formatters';
 
 export default function CreateUser({ open, setOpen }: { open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
   const navigate = useNavigate();
+  const [validInputs, setValidInputs] = useState(false);
+  let currentDate = useRef(new Date());
+  const dialog = useRef<HTMLDialogElement>(null);
   const [userData, setUserData] = useState<Required<Omit<UserDto, 'id'>>>({
     name: '',
     email: '',
@@ -18,8 +21,6 @@ export default function CreateUser({ open, setOpen }: { open: boolean; setOpen: 
   });
   const requiredAge = 10;
 
-  const [validInputs, setValidInputs] = useState(false);
-  let currentDate = useRef(new Date());
   useMemo(() => {
     currentDate.current = new Date();
   }, [currentDate]);
@@ -46,8 +47,6 @@ export default function CreateUser({ open, setOpen }: { open: boolean; setOpen: 
     if (fieldsFilled) validateAllInputs();
   }, [userData, validateAllInputs]);
 
-  const dialog = useRef<HTMLDialogElement>(null);
-
   const onClose = useCallback(() => {
     setUserData({ name: '', email: '', phone: '', role: 'user', birthDate: new Date(), password: '' });
     dialog.current?.close();
@@ -58,9 +57,15 @@ export default function CreateUser({ open, setOpen }: { open: boolean; setOpen: 
     document.addEventListener('mousedown', ({ target }) => {
       if (!dialog.current?.contains(target as Node)) onClose();
     });
+
+    return () => {
+      document.removeEventListener('mousedown', ({ target }) => {
+        if (!dialog.current?.contains(target as Node)) onClose();
+      });
+    };
   });
 
-  function userHasMinimuAge() {
+  function userHasMinimumAge() {
     // The provide birthDate should be before of the present date
     return (
       requiredAge &&
@@ -84,7 +89,6 @@ export default function CreateUser({ open, setOpen }: { open: boolean; setOpen: 
       await mutateUser({
         variables: { data: { ...userData, phone: justNumbers(userData.phone) } },
         onError: (error) => console.error(`${error.name}: ${error.message}`),
-        // @]typescript-eslint/no-unused-expressiions
         onCompleted: () => {
           onClose();
           navigate('/users/list');
@@ -185,7 +189,7 @@ export default function CreateUser({ open, setOpen }: { open: boolean; setOpen: 
                     <p className='input-group__informative-message'>A data não pode ser no futuro.</p>
                   )}
                   {/* The provide birthDate should be before of the present date */}
-                  {(userHasMinimuAge() && (
+                  {(userHasMinimumAge() && (
                     <p className='input-group__informative-message'>O usuário precisa ter ao menos {requiredAge} anos.</p>
                   )) ||
                     ''}
