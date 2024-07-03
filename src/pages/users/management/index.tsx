@@ -7,7 +7,7 @@ import { Link } from "../../../components/common/Link";
 import { Cta } from "../../../components/common/Cta";
 
 
-export function UserManagement() {
+export default function UserManagement() {
     const [showModal, setShowModal] = useState(false)
 
     return <>

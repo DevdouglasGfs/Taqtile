@@ -1,4 +1,3 @@
-import React from "react";
 import { Wrapper } from "../../../components/common/Wrapper";
 import { Menu } from "../../../components/common/Menu";
 import { Heading } from "../../../components/common/Heading";
@@ -10,7 +9,7 @@ import { StatusBlock } from "../../../components/common/StatusBlock";
 import { Spinner } from "../../../components/common/Spinner";
 import theme from "../../../themes/default";
 
-export const SpecificUserPage: React.FC = () => {
+export default function SpecificUserPage(){
     const { id } = useParams();
     const { data, error, loading } = useGetUserById(id);
 
