@@ -54,24 +54,23 @@ export default function CreateUser({ open, setOpen }: { open: boolean; setOpen: 
   }, [setOpen]);
 
   useEffect(() => {
+    const dialogRef = dialog.current;
     document.addEventListener('mousedown', ({ target }) => {
       if (!dialog.current?.contains(target as Node)) onClose();
     });
 
     return () => {
       document.removeEventListener('mousedown', ({ target }) => {
-        if (!dialog.current?.contains(target as Node)) onClose();
+        if (!dialogRef?.contains(target as Node)) onClose();
       });
     };
   });
 
   function userHasMinimumAge() {
-    // The provide birthDate should be before of the present date
     return (
       requiredAge &&
       requiredAge > 0 &&
       userData.birthDate < currentDate.current &&
-      // The provide birthDate should be before of the same date in (requiredAge)
       userData.birthDate >
         new Date(currentDate.current.getFullYear() - requiredAge, currentDate.current.getMonth(), currentDate.current.getDate())
     );
