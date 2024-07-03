@@ -1,0 +1,122 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 100dvh;
+  padding-bottom: 2rem;
+}
+
+.title {
+  font-style: italic;
+  font-size: 24px;
+  color: rgb(31, 160, 60);
+  margin: 0;
+}
+
+.title .highlight {
+  font-size: 32px;
+  font-style: normal;
+  color: rgb(57, 57, 57);
+}
+
+/* === Users List -> Table === */
+.users-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  width: 50cqw;
+  max-width: 100%;
+}
+
+.users-list thead {
+  background-color: rgb(31, 160, 60);
+  color: white;
+  overflow: hidden;
+}
+
+.users-list thead tr {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: minmax(fit-content, 1fr);
+  justify-content: center;
+}
+
+.users-list tbody {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 50cqh;
+  overflow: hidden scroll;
+  scrollbar-color: rgb(31, 160, 60) #fff;
+  scrollbar-width: 2px;
+  background-color: #fafafa;
+}
+
+.users-list tbody tr {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: minmax(fit-content, 1fr);
+  border-bottom: 1px solid rgba(57, 57, 57, 0.2);
+}
+
+.users-list tbody td:first-child {
+  /*=== format names to capitalize ===*/
+  text-transform: capitalize;
+}
+
+.users-list thead tr,
+.users-list tbody tr {
+  width: 100%;
+  padding: 0.5rem;
+}
+
+.pagination-controls {
+  position: absolute;
+  bottom: -2rem;
+  inset-inline: 0;
+  max-width: fit-content;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: linear-gradient(to right, rgba(31, 160, 60, 0.2), rgba(31, 160, 60, 0.2));
+  backdrop-filter: blur(1rem);
+  padding: 1rem;
+  border-radius: 2rem;
+}
+
+.pagination-controls__prev,
+.pagination-controls__next {
+  display: flex;
+  align-items: center;
+  appearance: none;
+  border: none;
+  justify-content: center;
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  background-color: rgb(31, 160, 60);
+  color: #fff;
+  font-weight: medium;
+  cursor: pointer;
+  transition: color background 200ms ease-in;
+}
+
+.pagination-controls__prev:disabled,
+.pagination-controls__next:disabled {
+  background-color: #fff;
+  color: rgb(31, 160, 60);
+}
+
+.pagination-controls__prev:active:not(:disabled),
+.pagination-controls__next:active:not(:disabled) {
+  background-color: rgb(31, 130, 60);
+}
+
+.pagination-controls__prev:active:not(:disabled),
+.pagination-controls__next:active:not(:disabled) {
+  background-color: rgb(31, 145, 60);
+}
