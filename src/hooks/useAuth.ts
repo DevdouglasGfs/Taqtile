@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
 import { Authentication } from "../types/auth"
-import { checkLoginStatus } from "../utils/auth"
+import { getLoginToken } from "../utils/auth"
 import { jwtDecode } from "jwt-decode"
 
 export const useAuthentication = () => {
     const [authentication, setAuthentication] = useState<Authentication>({authenticated: false})
-    const token = checkLoginStatus();
+    const token = getLoginToken();
 
     useEffect(() => {
         if(token && isValidJwt(token)){
