@@ -16,14 +16,16 @@ export default function LoginForm() {
   const userData = { email, password } as { email: string; password: string };
 
   onkeydown = (ev) => {
-    if (ev.key === 'Enter') login();
+    if (ev.key === 'Enter') {
+      login();
+    }
   };
 
   const validateInput = (): boolean => {
     // Make the user input validation removing any spaces in the start and end of the input.
     if (validateEmail(email)) setValidEmail(true);
     else setValidEmail(false);
-    
+
     if (validatePassword(password) && password.trim().length >= 7) setValidPassword(true);
     else setValidPassword(false);
 
@@ -92,8 +94,8 @@ export default function LoginForm() {
         {error && <p className='info-block__error'>{error.message}</p>}
         <button
           type='submit'
-          onClick={(ev) => {
-            ev.preventDefault();
+          onClick={(event) => {
+            event.preventDefault();
             login();
           }}
           className='login-form__submit'
