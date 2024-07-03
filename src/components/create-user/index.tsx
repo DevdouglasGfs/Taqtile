@@ -224,3 +224,4 @@ export default function CreateUser({ open, setOpen }: { open: boolean; setOpen: 
     </>
   );
 }
+

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/mutations/login';
 import { getLoginToken, storeLoginToken } from '../../utils/auth';
+import { getLoginToken, storeLoginToken } from '../../utils/auth';
 import { useNavigate } from 'react-router-dom';
 import { Field as LoginField } from '../field';
 import { Heading } from '../common/Heading';
@@ -17,12 +18,21 @@ export default function LoginForm() {
   if (getLoginToken()) navigate('/users', { replace: true });
 
   const [userData, setUserData] = useState<{ email: string; password: string }>({
+  const navigate = useNavigate();
+  if (getLoginToken()) navigate('/users', { replace: true });
+
+  const [userData, setUserData] = useState<{ email: string; password: string }>({
     email: '',
+    password: '',
     password: '',
   });
   const { email, password } = userData;
+  const { email, password } = userData;
 
   onkeydown = (ev) => {
+    if (ev.key === 'Enter') {
+      login();
+    }
     if (ev.key === 'Enter') {
       login();
     }
@@ -53,6 +63,8 @@ export default function LoginForm() {
         <Heading $size='1.5rem'>Bem-vindo(a) à Taqtile!</Heading>
         <Wrapper $dir='column' $gap='2rem'>
           <fieldset>
+            <LoginField type='email' update={handleInput} value={email} />
+            <LoginField type='password' update={handleInput} value={password} />
             <LoginField type='email' update={handleInput} value={email} />
             <LoginField type='password' update={handleInput} value={password} />
           </fieldset>

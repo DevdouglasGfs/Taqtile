@@ -2,6 +2,7 @@ import { useGetUsers } from '../../../hooks/useGetUsers';
 import { UserDto } from '../../../types/user';
 import { useState } from 'react';
 import { getLoginToken } from '../../../utils/auth';
+import { getLoginToken } from '../../../utils/auth';
 import { useNavigate } from 'react-router-dom';
 import { Heading } from '../../../components/common/Heading';
 import styled from 'styled-components';
@@ -19,6 +20,8 @@ const Container = styled.main`
 `;
 
 export default function UsersList() {
+  const navigate = useNavigate();
+  if (!getLoginToken()) navigate('/login', { replace: true });
   const navigate = useNavigate();
   if (!getLoginToken()) navigate('/login', { replace: true });
 

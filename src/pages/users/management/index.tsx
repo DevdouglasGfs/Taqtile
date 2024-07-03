@@ -23,4 +23,5 @@ export default function UserManagement() {
             <Cta $fill="half" onClick={() => setShowModal(true)}>Adicionar usuário</Cta>
         </Wrapper>
     </>
+  );
 }
