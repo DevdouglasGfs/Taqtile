@@ -33,3 +33,13 @@ export const formatPhoneAndValidate = (phone: string) => {
   const phoneWithJustNumbers = phone.trim().replace(/\D+/g, '');
   return validatePhone(phoneWithJustNumbers);
 };
+
+export const birthDateIsValid = (date: Date | string, requiredAge?: number) => {
+  const currentDate = new Date();
+  const birthDate = new Date(date);
+
+  return (
+    birthDate <= new Date(currentDate.getFullYear() - (requiredAge || 0), currentDate.getMonth(), currentDate.getDate()) &&
+    birthDate <= currentDate
+  );
+};
