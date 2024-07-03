@@ -1,31 +1,15 @@
-import React from "react";
-import { Wrapper } from "../../../components/common/wrapper";
-import { Menu } from "../../../components/common/menu";
-import { Heading } from "../../../components/common/heading";
-import { Link } from "../../../components/common/link";
-import { Hero } from "../../../components/common/hero";
+import { Wrapper } from "../../../components/common/Wrapper";
+import { Menu } from "../../../components/common/Menu";
+import { Heading } from "../../../components/common/Heading";
+import { Link } from "../../../components/common/Link";
+import { Hero } from "../../../components/common/Hero";
 import { useGetUserById } from "../../../hooks/useGetUser";
 import { useParams } from "react-router-dom";
-import { StatusBlock } from "../../../components/common/statusBlock";
-import { theme } from "..";
-import styled from "styled-components";
-import { Spinner } from "../../../components/common/spinner";
+import { StatusBlock } from "../../../components/common/StatusBlock";
+import { Spinner } from "../../../components/common/Spinner";
+import theme from "../../../themes/default";
 
-export interface UserPage {
-    [id: string]: string
-}
-
-const CustomErrorHeading = styled(Heading)`
-    color: #fff;
-    font-size: 1.5rem;
-`;
-
-const CustomPresentHeading = styled(Heading)`
-    color: #fff;
-    font-size: 1.5rem;
-`;
-
-export const SpecificUserPage: React.FC = () => {
+export default function SpecificUserPage(){
     const { id } = useParams();
     const { data, error, loading } = useGetUserById(id);
 
@@ -44,7 +28,7 @@ export const SpecificUserPage: React.FC = () => {
             {loading && (
                 <Hero $bg="transparent">
                     <Wrapper $gap=".5rem" $justify="center" $align="center" $maxWidth="max(600px, 100%)">
-                        <Spinner size="2rem" />
+                        <Spinner $size="2rem" />
                         Carregando...
                     </Wrapper>
                 </Hero>
@@ -52,7 +36,7 @@ export const SpecificUserPage: React.FC = () => {
             {error && (
                 <Wrapper $maxWidth="80cqw">
                     <StatusBlock $justify="start" $dir="column" $status="error">
-                        <CustomErrorHeading as={"h2"}>Erro ao carregar</CustomErrorHeading>
+                        <Heading $size="1.5rem" as={"h2"}>Erro ao carregar</Heading>
                         <p>{error.message}</p>
                     </StatusBlock>
                 </Wrapper>
@@ -60,17 +44,17 @@ export const SpecificUserPage: React.FC = () => {
             {data && (
                 <Wrapper $maxWidth="80cqw">
                     <Hero $padding="" $bg={`linear-gradient(to bottom, ${theme.colors.link}, ${theme.colors.bgBold})`}>
-                        <CustomPresentHeading as={"h2"}>
+                        <Heading $size="1.5rem" as={"h2"}>
                             <span>Usuário</span>
                             {data.user.name}
-                        </CustomPresentHeading>
+                        </Heading>
                         <Wrapper $padding="" $align="start">
-                            <StatusBlock $align="start" $rounded $status="info">
-                                <p><strong>Nome</strong>: {(data.user.name as string).substring(0, 1).toUpperCase() + (data.user.name as string).substring(1)}</p>
-                                <p><strong>Email</strong>: {data.user.email}</p>
-                                <p><strong>Data de Nascimento</strong>: {new Date(data.user.birthDate).toLocaleDateString(navigator.language)}</p>
-                                <p><strong>Telefone</strong>: {data.user.phone}</p>
-                                <p><strong>Cargo</strong>: {data.user.role}</p>
+                            <StatusBlock $align="start" $rounded $status="info" as="ul">
+                                <li><strong>Nome</strong>: {(data.user.name as string).substring(0, 1).toUpperCase() + (data.user.name as string).substring(1)}</li>
+                                <li><strong>Email</strong>: {data.user.email}</li>
+                                <li><strong>Data de Nascimento</strong>: {new Date(data.user.birthDate).toLocaleDateString(navigator.language)}</li>
+                                <li><strong>Telefone</strong>: {data.user.phone}</li>
+                                <li><strong>Cargo</strong>: {data.user.role}</li>
                             </StatusBlock>
                         </Wrapper>
                     </Hero>

@@ -1,5 +1,5 @@
 export interface FlexComportamentProps {
-    $flex?: boolean;
+    $flex?: string;
     $justify?: "start" | "end" | "center" | "space-between" | "space-around";
     $align?: "center" | "start" | "end";
     $gap?: string;
@@ -8,12 +8,5 @@ export interface FlexComportamentProps {
 }
 
 export type OverlapProps = {
-    isolate?: boolean;
-}
-
-export interface Distance {
-    left?: string;
-    right?: string;
-    top?: string;
-    bottom?: string;
+    $isolate?: boolean;
 }

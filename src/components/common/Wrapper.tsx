@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { FlexComportamentProps } from "../types";
+import theme from "../../themes/default";
 
 interface WrapperProps extends FlexComportamentProps {
     $maxWidth?: string;
@@ -34,7 +35,7 @@ export const GridWrapper = styled(Wrapper)`
 
             &:nth-child(2){
                 overflow: scroll;
-                scrollbar-color: ${props => props.theme.colors.mediumEmerald} ${props => props.theme.colors.bgBolder || "#111827"};
+                scrollbar-color: ${props => props.theme.colors.mediumEmerald || theme.colors.mediumEmerald} ${props => props.theme.colors.bgBolder || theme.colors.bgBolder};
                 scrollbar-width: thin;
             }
         }

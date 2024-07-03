@@ -9,9 +9,9 @@ const rotate = keyframes`
     }
 `;
 
-export const Spinner = styled.span<{size?: string}>`
-    width: ${props => props.size || '1rem'};
-    height: ${props => props.size || '1rem'};
+export const Spinner = styled.span<{$size?: string}>`
+    width: ${props => props.$size || '1rem'};
+    height: ${props => props.$size || '1rem'};
     border: 4px solid #FFF;
     border-bottom-color: transparent;
     border-radius: 50%;

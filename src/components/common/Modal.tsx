@@ -1,6 +1,7 @@
 import styled, { keyframes } from "styled-components";
 import { FlexComportamentProps, OverlapProps } from "../types";
 import Keyframes from "styled-components/dist/models/Keyframes";
+import theme from "../../themes/default";
 
 
 export interface ModalProps extends FlexComportamentProps, OverlapProps {
@@ -34,8 +35,11 @@ export const Modal = styled.div<ModalProps>`
     transform: translate(-50%, -50%);
     width: calc(100% - 2rem);
     max-width: 70cqw;
-    height: calc(100% - 2rem);
-    background: ${props => props?.$bg } ${props => !props?.$bg && "linear-gradient(to bottom, #030712, #111827)"};
+    height: min(calc(100% - 2rem), 90dvh);
+    background: ${props => {
+        if (props.$bg) { return props.$bg };
+        return `linear-gradient(to bottom, ${theme.colors.bgBolder}, ${theme.colors.bgBold})`
+    }};
     box-shadow: 0 0 1rem rgba(0, 0, 0, .2);
     border: 1px solid rgba(255, 255, 255, .1);
     z-index: ${props => props.zIndex || 1000};

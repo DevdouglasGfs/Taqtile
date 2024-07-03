@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import theme from "../../themes/default";
 
 
 export const Table = styled.table`
@@ -7,11 +8,11 @@ export const Table = styled.table`
     border-spacing: 0;
     border-radius: 0.5rem;
     overflow: hidden;
-    background: ${props => props.theme.colors.bgBold};
+    background: ${props => props.theme.colors.bgBold || theme.colors.bgBold};
     color: #fff;
 
     & > thead {
-        background: ${props => props.theme.colors.link};
+        background: ${props => props.theme.colors.link || theme.colors.link};
         width: 100%;
 
         & tr {
@@ -32,10 +33,10 @@ export const Table = styled.table`
         flex-direction: column;
         height: 12rem;
         max-height: 12rem;
-        background: ${props => props.theme.colors.bgBolder};
+        background: ${props => props.theme.colors.bgBolder || theme.colors.bgBolder};
         width: 100%;
         overflow-y: scroll;
-        scrollbar-color: ${props => props.theme.colors.mediumEmerald} ${props => props.theme.colors.bgBolder || "#111827"};
+        scrollbar-color: ${props => props.theme.colors.mediumEmerald || theme.colors.mediumEmerald} ${props => props.theme.colors.bgBolder || theme.colors.bgBolder};
 
         & tr {
             display: grid;
@@ -43,16 +44,21 @@ export const Table = styled.table`
             text-align: left;
             min-width: 100%;
             max-width: 100%;
-            background: ${props => props.theme.colors.bgBolder};
+            background: ${props => props.theme.colors.bgBolder || theme.colors.bgBolder};
             transition: background-color 0.1s ease-in;
-            color: ${props => props.theme.colors.softEmerald};
+            color: ${props => props.theme.colors.softEmerald || theme.colors.softEmerald};
 
             & td {
                 padding: .5rem;
             }
+
             &:hover{
-                background: ${props => props.theme.colors.link};
+                background: ${props => props.theme.colors.link || theme.colors.link};
                 color: #fff;
+                cursor: pointer;
+            }
+
+            &[link]{
                 cursor: pointer;
             }
         }

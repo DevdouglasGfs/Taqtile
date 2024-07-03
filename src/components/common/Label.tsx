@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { FlexComportamentProps } from "../types";
+import theme from "../../themes/default";
 
 interface LabelProps extends FlexComportamentProps {
     $hasIcon?: boolean;
@@ -16,9 +17,10 @@ export const Label = styled.label<LabelProps>`
 
     & p {
         font-size: .8rem;
-        color: rgb(222, 100, 100);
+        color: ${props => props.theme.colors.alert || theme.colors.alert};
         margin: 0;
     }
+
     & span {
         font-weight: 400;
     }

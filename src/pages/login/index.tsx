@@ -1,15 +1,15 @@
 import styled, { ThemeProvider } from 'styled-components';
 import LoginForm from '../../components/login-form';
-import { theme } from '../users';
+import theme from '../../themes/default';
 
-const Container = styled.div`
+const Container = styled.main`
   width: 100%;
 `;
 
 export default function LoginPage() {
   return (
     <ThemeProvider theme={theme}>
-      <Container as="main">
+      <Container>
         <LoginForm />
       </Container>
     </ThemeProvider>
