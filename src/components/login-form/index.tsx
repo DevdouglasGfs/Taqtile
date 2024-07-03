@@ -94,8 +94,8 @@ export default function LoginForm() {
         {error && <p className='info-block__error'>{error.message}</p>}
         <button
           type='submit'
-          onClick={(event) => {
-            event.preventDefault();
+          onClick={(ev) => {
+            ev.preventDefault();
             login();
           }}
           className='login-form__submit'
