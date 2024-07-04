@@ -55,8 +55,6 @@ export default function LoginForm() {
           <fieldset>
             <LoginField type='email' update={handleInput} value={email} />
             <LoginField type='password' update={handleInput} value={password} />
-            <LoginField type='email' update={handleInput} value={email} />
-            <LoginField type='password' update={handleInput} value={password} />
           </fieldset>
           {error && !loading && <StatusBlock $status='error'><p>{error.message}</p></StatusBlock>}
         </Wrapper>
