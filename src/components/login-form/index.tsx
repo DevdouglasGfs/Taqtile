@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/mutations/login';
-import { getLoginToken, storeLoginToken } from '../../utils/auth';
+import { storeLoginToken } from '../../utils/auth';
 import { useNavigate } from 'react-router-dom';
 import { Field as LoginField } from '../field';
 import { Heading } from '../common/Heading';
@@ -11,10 +11,12 @@ import { Cta } from '../common/Cta';
 import { Spinner } from '../common/Spinner';
 import { Form } from '../common/Form';
 import { validateEmail, validatePassword } from '../../utils/validators';
+import { useAuthentication } from '../../hooks/useAuth';
+
 
 export default function LoginForm() {
-  const navigate = useNavigate();
-  if (getLoginToken()) navigate('/users', { replace: true });
+  const navigate = useNavigate()
+  if (useAuthentication().authenticated) navigate('/users', { replace: true })
 
   const [userData, setUserData] = useState<{ email: string; password: string }>({
     email: '',
